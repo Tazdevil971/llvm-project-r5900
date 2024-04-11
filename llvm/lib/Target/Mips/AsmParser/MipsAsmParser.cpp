@@ -119,16 +119,15 @@ private:
 } // end anonymous namespace
 
 const FeatureBitset MipsAssemblerOptions::AllArchRelatedMask = {
-    Mips::FeatureMips1, Mips::FeatureMips2, Mips::FeatureMips3,
-    Mips::FeatureMips3_32, Mips::FeatureMips3_32r2, Mips::FeatureMips4,
-    Mips::FeatureMips4_32, Mips::FeatureMips4_32r2, Mips::FeatureMips5,
-    Mips::FeatureMips5_32r2, Mips::FeatureMips32, Mips::FeatureMips32r2,
-    Mips::FeatureMips32r3, Mips::FeatureMips32r5, Mips::FeatureMips32r6,
-    Mips::FeatureMips64, Mips::FeatureMips64r2, Mips::FeatureMips64r3,
-    Mips::FeatureMips64r5, Mips::FeatureMips64r6, Mips::FeatureCnMips,
-    Mips::FeatureCnMipsP, Mips::FeatureFP64Bit, Mips::FeatureGP64Bit,
-    Mips::FeatureNaN2008
-};
+    Mips::FeatureMips1,      Mips::FeatureMips2,      Mips::FeatureMips3,
+    Mips::FeatureMips3_32,   Mips::FeatureMips3_32r2, Mips::FeatureMips4,
+    Mips::FeatureMips4_32,   Mips::FeatureMips4_32r2, Mips::FeatureMips5,
+    Mips::FeatureMips5_32r2, Mips::FeatureMips32,     Mips::FeatureMips32r2,
+    Mips::FeatureMips32r3,   Mips::FeatureMips32r5,   Mips::FeatureMips32r6,
+    Mips::FeatureMips64,     Mips::FeatureMips64r2,   Mips::FeatureMips64r3,
+    Mips::FeatureMips64r5,   Mips::FeatureMips64r6,   Mips::FeatureCnMips,
+    Mips::FeatureCnMipsP,    Mips::FeatureR5900,      Mips::FeatureFP64Bit,
+    Mips::FeatureGP64Bit,    Mips::FeatureNaN2008};
 
 namespace {
 
@@ -691,6 +690,8 @@ public:
   bool hasCnMipsP() const {
     return (getSTI().hasFeature(Mips::FeatureCnMipsP));
   }
+
+  bool isR5900() const { return getSTI().hasFeature(Mips::FeatureR5900); }
 
   bool inPicMode() {
     return IsPicEnabled;
@@ -7559,6 +7560,7 @@ bool MipsAsmParser::parseSetArchDirective() {
           .Case("mips64r6", "mips64r6")
           .Case("octeon", "cnmips")
           .Case("octeon+", "cnmipsp")
+          .Case("r5900", "r5900")
           .Case("r4000", "mips3") // This is an implementation of Mips3.
           .Default("");
 

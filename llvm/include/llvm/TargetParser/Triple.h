@@ -222,6 +222,7 @@ public:
     CUDA,   // NVIDIA CUDA
     NVCL,   // NVIDIA OpenCL
     AMDHSA, // AMD HSA Runtime
+    PS2,
     PS4,
     PS5,
     ELFIAMCU,
@@ -782,6 +783,11 @@ public:
   /// Tests whether the OS uses the DXContainer binary format.
   bool isOSBinFormatDXContainer() const {
     return getObjectFormat() == Triple::DXContainer;
+  }
+
+  /// Tests whether the target is the PS2 platform.
+  bool isPS2() const {
+    return getArch() == Triple::mips64el && getOS() == Triple::PS2;
   }
 
   /// Tests whether the target is the PS4 platform.

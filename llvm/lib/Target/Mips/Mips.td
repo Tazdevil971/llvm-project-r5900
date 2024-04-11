@@ -212,6 +212,10 @@ def FeatureStrictAlign
     : SubtargetFeature<"strict-align", "StrictAlign", "true",
                        "Disable unaligned load store for r6">;
 
+def FeatureR5900
+    : SubtargetFeature<"r5900", "IsR5900", "true",
+                       "The R5900 Processor", [FeatureMips3, FeatureSoftFloat]>;
+
 //===----------------------------------------------------------------------===//
 // Register File, Calling Conv, Instruction Descriptions
 //===----------------------------------------------------------------------===//
@@ -274,6 +278,7 @@ def : Proc<"octeon+", [FeatureMips64r2, FeatureCnMips, FeatureCnMipsP]>;
 def : ProcessorModel<"p5600", MipsP5600Model, [ImplP5600]>;
 def : ProcessorModel<"i6400", MipsI6400Model, [ImplI6400]>;
 def : ProcessorModel<"i6500", MipsI6400Model, [ImplI6500]>;
+def : ProcessorModel<"r5900", MipsGenericModel, [FeatureR5900]>;
 
 def MipsAsmParser : AsmParser {
   let ShouldEmitMatchRegisterName = 0;

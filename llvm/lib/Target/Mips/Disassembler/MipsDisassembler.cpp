@@ -64,6 +64,8 @@ public:
 
   bool hasCnMipsP() const { return STI.hasFeature(Mips::FeatureCnMipsP); }
 
+  bool isR5900() const { return STI.hasFeature(Mips::FeatureR5900); }
+
   bool hasCOP3() const {
     // Only present in MIPS-I and MIPS-II
     return !hasMips32() && !hasMips3();

@@ -153,6 +153,9 @@ class MipsSubtarget : public MipsGenSubtargetInfo {
   // Has3D -- Supports Mips3D ASE.
   bool Has3D;
 
+  // This CPU uses the PS2 R5900 modified instruction set
+  bool IsR5900;
+
   // Allow mixed Mips16 and Mips32 in one source file
   bool AllowMixed16_32;
 
@@ -283,6 +286,8 @@ public:
 
   bool hasCnMips() const { return HasCnMips; }
   bool hasCnMipsP() const { return HasCnMipsP; }
+
+  bool isR5900() const { return IsR5900; }
 
   bool isLittle() const { return IsLittle; }
   bool isABICalls() const { return !NoABICalls; }

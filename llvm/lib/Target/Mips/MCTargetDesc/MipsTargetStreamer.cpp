@@ -923,6 +923,9 @@ MipsTargetELFStreamer::MipsTargetELFStreamer(MCStreamer &S,
   if (Features[Mips::FeatureCnMips])
     EFlags |= ELF::EF_MIPS_MACH_OCTEON;
 
+  if (Features[Mips::FeatureR5900])
+    EFlags |= ELF::EF_MIPS_MACH_5900;
+
   // Other options.
   if (Features[Mips::FeatureNaN2008])
     EFlags |= ELF::EF_MIPS_NAN2008;

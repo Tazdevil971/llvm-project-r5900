@@ -50,6 +50,12 @@ void mips::getMipsCPUAndABI(const ArgList &Args, const llvm::Triple &Triple,
     DefMips64CPU = "mips3";
   }
 
+  // R5900 is the default for PS2
+  if (Triple.isPS2()) {
+    DefMips32CPU = "r5900";
+    DefMips64CPU = "r5900";
+  }
+
   if (Arg *A = Args.getLastArg(clang::driver::options::OPT_march_EQ,
                                options::OPT_mcpu_EQ))
     CPUName = A->getValue();
@@ -79,6 +85,9 @@ void mips::getMipsCPUAndABI(const ArgList &Args, const llvm::Triple &Triple,
       break;
     }
   }
+
+  if (ABIName.empty() && Triple.isPS2())
+    ABIName = "n32";
 
   if (ABIName.empty() && Triple.isABIN32())
     ABIName = "n32";
@@ -146,7 +155,8 @@ StringRef mips::getGnuCompatibleMipsABIName(StringRef ABI) {
 // Select the MIPS float ABI as determined by -msoft-float, -mhard-float,
 // and -mfloat-abi=.
 mips::FloatABI mips::getMipsFloatABI(const Driver &D, const ArgList &Args,
-                                     const llvm::Triple &Triple) {
+                                     const llvm::Triple &Triple,
+                                     StringRef CPUName) {
   mips::FloatABI ABI = mips::FloatABI::Invalid;
   if (Arg *A =
           Args.getLastArg(options::OPT_msoft_float, options::OPT_mhard_float,
@@ -171,6 +181,9 @@ mips::FloatABI mips::getMipsFloatABI(const Driver &D, const ArgList &Args,
   if (ABI == mips::FloatABI::Invalid) {
     if (Triple.isOSFreeBSD()) {
       // For FreeBSD, assume "soft" on all flavors of MIPS.
+      ABI = mips::FloatABI::Soft;
+    } else if (CPUName == "r5900") {
+      // Currently the r5900 does not support hard FP
       ABI = mips::FloatABI::Soft;
     } else {
       // Assume "hard", because it's a default value used by gcc.
@@ -239,12 +252,14 @@ void mips::getMIPSTargetFeatures(const Driver &D, const llvm::Triple &Triple,
          O.matches(options::OPT_fPIE) || O.matches(options::OPT_fpie));
   }
 
-  bool UseAbiCalls = false;
+  // Some targets require -noabicalls by default
+  bool UseAbiCalls = !Triple.isPS2();
 
   Arg *ABICallsArg =
       Args.getLastArg(options::OPT_mabicalls, options::OPT_mno_abicalls);
-  UseAbiCalls =
-      !ABICallsArg || ABICallsArg->getOption().matches(options::OPT_mabicalls);
+  if (ABICallsArg) {
+    UseAbiCalls = ABICallsArg->getOption().matches(options::OPT_mabicalls);
+  }
 
   if (IsN64 && NonPIC && (!ABICallsArg || UseAbiCalls)) {
     D.Diag(diag::warn_drv_unsupported_pic_with_mabicalls)
@@ -277,7 +292,7 @@ void mips::getMIPSTargetFeatures(const Driver &D, const llvm::Triple &Triple,
       Features.push_back("-xgot");
   }
 
-  mips::FloatABI FloatABI = mips::getMipsFloatABI(D, Args, Triple);
+  mips::FloatABI FloatABI = mips::getMipsFloatABI(D, Args, Triple, CPUName);
   if (FloatABI == mips::FloatABI::Soft) {
     // FIXME: Note, this is a hack. We need to pass the selected float
     // mode to the MipsTargetInfoBase to define appropriate macros there.
