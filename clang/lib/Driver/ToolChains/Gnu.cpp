@@ -893,7 +893,7 @@ void tools::gnutools::Assembler::ConstructJob(Compilation &C,
     } else if (mips::shouldUseFPXX(
                    Args, getToolChain().getTriple(), CPUName, ABIName,
                    mips::getMipsFloatABI(getToolChain().getDriver(), Args,
-                                         getToolChain().getTriple())))
+                                         getToolChain().getTriple(), CPUName)))
       CmdArgs.push_back("-mfpxx");
 
     // Pass on -mmips16 or -mno-mips16. However, the assembler equivalent of
