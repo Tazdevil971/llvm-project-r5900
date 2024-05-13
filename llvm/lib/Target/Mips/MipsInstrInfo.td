@@ -216,6 +216,10 @@ def HasCnMipsP   :    Predicate<"Subtarget->hasCnMipsP()">,
                       AssemblerPredicate<(all_of FeatureCnMipsP)>;
 def NotCnMipsP   :    Predicate<"!Subtarget->hasCnMipsP()">,
                       AssemblerPredicate<(all_of (not FeatureCnMipsP))>;
+def IsR5900      :    Predicate<"Subtarget->isR5900()">,
+                      AssemblerPredicate<(all_of FeatureR5900)>;
+def NotR5900     :    Predicate<"!Subtarget->isR5900()">,
+                      AssemblerPredicate<(all_of (not FeatureR5900))>;
 def IsSym32     :     Predicate<"Subtarget->hasSym32()">,
                       AssemblerPredicate<(all_of FeatureSym32)>;
 def IsSym64     :     Predicate<"!Subtarget->hasSym32()">,
@@ -450,6 +454,18 @@ class ASE_CNMIPSP {
 
 class NOT_ASE_CNMIPSP {
   list<Predicate> ASEPredicate = [NotCnMipsP];
+}
+
+class ASE_R5900 {
+  list<Predicate> ASEPredicate = [IsR5900];
+}
+
+class NOT_ASE_R5900 {
+  list<Predicate> ASEPredicate = [NotR5900];
+}
+
+class NOT_ASE_R5900_CNMIPS {
+  list<Predicate> ASEPredicate = [NotR5900, NotCnMips];
 }
 
 class ASE_MIPS64_CNMIPS {
@@ -2137,24 +2153,24 @@ def SWR : MMRel, StoreLeftRight<"swr", MipsSWR, GPR32Opnd, II_SWR>, LW_FM<0x2e>,
 
 // COP2 Memory Instructions
 def LWC2 : StdMMR6Rel, LW_FT2<"lwc2", COP2Opnd, II_LWC2, load>, LW_FM<0x32>,
-           ISA_MIPS1_NOT_32R6_64R6;
+           ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_R5900;
 def SWC2 : StdMMR6Rel, SW_FT2<"swc2", COP2Opnd, II_SWC2, store>,
-           LW_FM<0x3a>, ISA_MIPS1_NOT_32R6_64R6;
+           LW_FM<0x3a>, ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_R5900;
 def LDC2 : StdMMR6Rel, LW_FT2<"ldc2", COP2Opnd, II_LDC2, load>, LW_FM<0x36>,
-           ISA_MIPS2_NOT_32R6_64R6;
+           ISA_MIPS2_NOT_32R6_64R6, NOT_ASE_R5900;
 def SDC2 : StdMMR6Rel, SW_FT2<"sdc2", COP2Opnd, II_SDC2, store>,
-           LW_FM<0x3e>, ISA_MIPS2_NOT_32R6_64R6;
+           LW_FM<0x3e>, ISA_MIPS2_NOT_32R6_64R6, NOT_ASE_R5900;
 
 // COP3 Memory Instructions
 let DecoderNamespace = "COP3_" in {
   def LWC3 : LW_FT3<"lwc3", COP3Opnd, II_LWC3, load>, LW_FM<0x33>,
-             ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_CNMIPS;
+             ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_R5900_CNMIPS;
   def SWC3 : SW_FT3<"swc3", COP3Opnd, II_SWC3, store>, LW_FM<0x3b>,
-             ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_CNMIPS;
+             ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_R5900_CNMIPS;
   def LDC3 : LW_FT3<"ldc3", COP3Opnd, II_LDC3, load>, LW_FM<0x37>,
-             ISA_MIPS2, NOT_ASE_CNMIPS;
+             ISA_MIPS2, NOT_ASE_R5900_CNMIPS;
   def SDC3 : SW_FT3<"sdc3", COP3Opnd, II_SDC3, store>, LW_FM<0x3f>,
-             ISA_MIPS2, NOT_ASE_CNMIPS;
+             ISA_MIPS2, NOT_ASE_R5900_CNMIPS;
 }
 
   def SYNC : MMRel, StdMMR6Rel, SYNC_FT<"sync">, SYNC_FM, ISA_MIPS2;
@@ -2435,9 +2451,9 @@ let AdditionalPredicates = [NotInMicroMips] in {
   def MFC0 : MFC3OP<"mfc0", GPR32Opnd, COP0Opnd, II_MFC0>,
              MFC3OP_FM<0x10, 0, 0>, ISA_MIPS1;
   def MFC2 : MFC3OP<"mfc2", GPR32Opnd, COP2Opnd, II_MFC2>,
-             MFC3OP_FM<0x12, 0, 0>, ISA_MIPS1;
+             MFC3OP_FM<0x12, 0, 0>, ISA_MIPS1, NOT_ASE_R5900;
   def MTC2 : MTC3OP<"mtc2", COP2Opnd, GPR32Opnd, II_MTC2>,
-             MFC3OP_FM<0x12, 4, 0>, ISA_MIPS1;
+             MFC3OP_FM<0x12, 4, 0>, ISA_MIPS1, NOT_ASE_R5900;
 }
 
 class Barrier<string asmstr, InstrItinClass itin = NoItinerary> :
