@@ -618,13 +618,13 @@ def SaadAddr : MipsAsmPseudoInst<(outs), (ins GPR64Opnd:$rt, mem:$addr),
 /// Move between CPU and coprocessor registers
 let DecoderNamespace = "Mips64" in {
 def DMFC0 : MFC3OP<"dmfc0", GPR64Opnd, COP0Opnd, II_DMFC0>,
-            MFC3OP_FM<0x10, 1, 0>, ISA_MIPS3, GPR_64;
+            MFC3OP_FM<0x10, 1, 0>, ISA_MIPS3, GPR_64, NOT_ASE_R5900;
 def DMTC0 : MTC3OP<"dmtc0", COP0Opnd, GPR64Opnd, II_DMTC0>,
-            MFC3OP_FM<0x10, 5, 0>, ISA_MIPS3, GPR_64;
+            MFC3OP_FM<0x10, 5, 0>, ISA_MIPS3, GPR_64, NOT_ASE_R5900;
 def DMFC2 : MFC3OP<"dmfc2", GPR64Opnd, COP2Opnd, II_DMFC2>,
-            MFC3OP_FM<0x12, 1, 0>, ISA_MIPS3, GPR_64;
+            MFC3OP_FM<0x12, 1, 0>, ISA_MIPS3, GPR_64, NOT_ASE_R5900;
 def DMTC2 : MTC3OP<"dmtc2", COP2Opnd, GPR64Opnd, II_DMTC2>,
-            MFC3OP_FM<0x12, 5, 0>, ISA_MIPS3, GPR_64;
+            MFC3OP_FM<0x12, 5, 0>, ISA_MIPS3, GPR_64, NOT_ASE_R5900;
 }
 
 /// Move between CPU and guest coprocessor registers (Virtualization ASE)
