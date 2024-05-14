@@ -19,3 +19,15 @@ foo:
     sdc3 $2, 0($2)  # CHECK: :[[@LINE]]:{{[0-9]+}}: error: invalid operand for instruction
     dmfc3 $2, $2, 0 # CHECK: :[[@LINE]]:{{[0-9]+}}: error: unknown instruction, did you mean: dmfc0, dmfc2?
     dmtc3 $2, $2, 0 # CHECK: :[[@LINE]]:{{[0-9]+}}: error: unknown instruction, did you mean: dmtc0, dmtc2?
+
+    # R5900 is single core
+    ll $2, 0($2)  # CHECK: :[[@LINE]]:{{[0-9]+}}: error: invalid operand for instruction
+    sc $2, 0($2)  # CHECK: :[[@LINE]]:{{[0-9]+}}: error: invalid operand for instruction
+    lld $2, 0($2) # CHECK: :[[@LINE]]:{{[0-9]+}}: error: invalid operand for instruction
+    scd $2, 0($2) # CHECK: :[[@LINE]]:{{[0-9]+}}: error: invalid operand for instruction
+
+    # R5900 does not support ll/sc
+    ll $2, 0($2)  # CHECK: :[[@LINE]]:{{[0-9]+}}: error: invalid operand for instruction
+    sc $2, 0($2)  # CHECK: :[[@LINE]]:{{[0-9]+}}: error: invalid operand for instruction
+    lld $2, 0($2) # CHECK: :[[@LINE]]:{{[0-9]+}}: error: invalid operand for instruction
+    scd $2, 0($2) # CHECK: :[[@LINE]]:{{[0-9]+}}: error: invalid operand for instruction
