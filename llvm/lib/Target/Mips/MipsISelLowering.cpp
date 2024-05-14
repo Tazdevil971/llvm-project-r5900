@@ -44,6 +44,7 @@
 #include "llvm/CodeGen/SelectionDAGNodes.h"
 #include "llvm/CodeGen/TargetFrameLowering.h"
 #include "llvm/CodeGen/TargetInstrInfo.h"
+#include "llvm/CodeGen/TargetLowering.h"
 #include "llvm/CodeGen/TargetRegisterInfo.h"
 #include "llvm/CodeGen/ValueTypes.h"
 #include "llvm/CodeGenTypes/MachineValueType.h"
@@ -488,6 +489,24 @@ MipsTargetLowering::MipsTargetLowering(const MipsTargetMachine &TM,
   if (!Subtarget.isGP64bit()) {
     setOperationAction(ISD::ATOMIC_LOAD,     MVT::i64,   Expand);
     setOperationAction(ISD::ATOMIC_STORE,    MVT::i64,   Expand);
+  }
+
+  // The R5900 doesn't support ll/sc, use libcalls for them
+  if (Subtarget.isR5900()) {
+    for (MVT VT : MVT::integer_valuetypes()) {
+      setOperationAction(ISD::ATOMIC_CMP_SWAP, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_SWAP, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_LOAD_ADD, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_LOAD_SUB, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_LOAD_AND, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_LOAD_OR, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_LOAD_XOR, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_LOAD_NAND, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_LOAD_MIN, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_LOAD_MAX, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_LOAD_UMIN, VT, LibCall);
+      setOperationAction(ISD::ATOMIC_LOAD_UMAX, VT, LibCall);
+    }
   }
 
   if (!Subtarget.hasMips32r2()) {
