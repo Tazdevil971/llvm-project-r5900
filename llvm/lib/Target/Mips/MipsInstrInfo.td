@@ -3406,6 +3406,10 @@ include "Mips64r6InstrInfo.td"
 include "Mips16InstrFormats.td"
 include "Mips16InstrInfo.td"
 
+// EE Core
+include "MipsEEInstrFormats.td"
+include "MipsEEInstrInfo.td"
+
 // DSP
 include "MipsDSPInstrFormats.td"
 include "MipsDSPInstrInfo.td"
