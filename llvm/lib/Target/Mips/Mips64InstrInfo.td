@@ -307,39 +307,44 @@ let AdditionalPredicates = [NotInMips16Mode, NotInMicroMips,
 /// Multiply and Divide Instructions.
 let AdditionalPredicates = [NotInMicroMips] in {
   def DMULT  : Mult<"dmult", II_DMULT, GPR64Opnd, [HI0_64, LO0_64]>,
-               MULT_FM<0, 0x1c>, ISA_MIPS3_NOT_32R6_64R6;
+               MULT_FM<0, 0x1c>, ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def DMULTu : Mult<"dmultu", II_DMULTU, GPR64Opnd, [HI0_64, LO0_64]>,
-               MULT_FM<0, 0x1d>, ISA_MIPS3_NOT_32R6_64R6;
+               MULT_FM<0, 0x1d>, ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 }
 def PseudoDMULT  : MultDivPseudo<DMULT, ACC128, GPR64Opnd, MipsMult,
-                                 II_DMULT>, ISA_MIPS3_NOT_32R6_64R6;
+                                 II_DMULT>, ISA_MIPS3_NOT_32R6_64R6, 
+                                 NOT_ASE_R5900;
 def PseudoDMULTu : MultDivPseudo<DMULTu, ACC128, GPR64Opnd, MipsMultu,
-                                 II_DMULTU>, ISA_MIPS3_NOT_32R6_64R6;
+                                 II_DMULTU>, ISA_MIPS3_NOT_32R6_64R6, 
+                                 NOT_ASE_R5900;
 let AdditionalPredicates = [NotInMicroMips] in {
   def DSDIV : Div<"ddiv", II_DDIV, GPR64Opnd, [HI0_64, LO0_64]>,
-              MULT_FM<0, 0x1e>, ISA_MIPS3_NOT_32R6_64R6;
+              MULT_FM<0, 0x1e>, ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def DUDIV : Div<"ddivu", II_DDIVU, GPR64Opnd, [HI0_64, LO0_64]>,
-              MULT_FM<0, 0x1f>, ISA_MIPS3_NOT_32R6_64R6;
+              MULT_FM<0, 0x1f>, ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 }
 def PseudoDSDIV : MultDivPseudo<DSDIV, ACC128, GPR64Opnd, MipsDivRem,
-                                II_DDIV, 0, 1, 1>, ISA_MIPS3_NOT_32R6_64R6;
+                                II_DDIV, 0, 1, 1>, ISA_MIPS3_NOT_32R6_64R6, 
+                                NOT_ASE_R5900;
 def PseudoDUDIV : MultDivPseudo<DUDIV, ACC128, GPR64Opnd, MipsDivRemU,
-                                II_DDIVU, 0, 1, 1>, ISA_MIPS3_NOT_32R6_64R6;
+                                II_DDIVU, 0, 1, 1>, ISA_MIPS3_NOT_32R6_64R6,
+                                NOT_ASE_R5900;
 
 let isCodeGenOnly = 1 in {
 def MTHI64 : MoveToLOHI<"mthi", GPR64Opnd, [HI0_64]>, MTLO_FM<0x11>,
-             ISA_MIPS3_NOT_32R6_64R6;
+             ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 def MTLO64 : MoveToLOHI<"mtlo", GPR64Opnd, [LO0_64]>, MTLO_FM<0x13>,
-             ISA_MIPS3_NOT_32R6_64R6;
+             ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 def MFHI64 : MoveFromLOHI<"mfhi", GPR64Opnd, AC0_64>, MFLO_FM<0x10>,
-             ISA_MIPS3_NOT_32R6_64R6;
+             ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 def MFLO64 : MoveFromLOHI<"mflo", GPR64Opnd, AC0_64>, MFLO_FM<0x12>,
-             ISA_MIPS3_NOT_32R6_64R6;
+             ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 def PseudoMFHI64 : PseudoMFLOHI<GPR64, ACC128, MipsMFHI>,
-                   ISA_MIPS3_NOT_32R6_64R6;
+                   ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 def PseudoMFLO64 : PseudoMFLOHI<GPR64, ACC128, MipsMFLO>,
-                   ISA_MIPS3_NOT_32R6_64R6;
-def PseudoMTLOHI64 : PseudoMTLOHI<ACC128, GPR64>, ISA_MIPS3_NOT_32R6_64R6;
+                   ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
+def PseudoMTLOHI64 : PseudoMTLOHI<ACC128, GPR64>, 
+                     ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 
 /// Sign Ext In Register Instructions.
 def SEB64 : SignExtInReg<"seb", i8, GPR64Opnd, II_SEB>, SEB_FM<0x10, 0x20>,
@@ -1140,19 +1145,19 @@ let AdditionalPredicates = [NotInMicroMips] in {
   def DSDivMacro : MipsAsmPseudoInst<(outs GPR64Opnd:$rd),
                                      (ins GPR64Opnd:$rs, GPR64Opnd:$rt),
                                      "ddiv\t$rd, $rs, $rt">,
-                   ISA_MIPS3_NOT_32R6_64R6;
+                   ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def DSDivIMacro : MipsAsmPseudoInst<(outs GPR64Opnd:$rd),
                                       (ins GPR64Opnd:$rs, imm64:$imm),
                                       "ddiv\t$rd, $rs, $imm">,
-                    ISA_MIPS3_NOT_32R6_64R6;
+                    ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def DUDivMacro : MipsAsmPseudoInst<(outs GPR64Opnd:$rd),
                                      (ins GPR64Opnd:$rs, GPR64Opnd:$rt),
                                      "ddivu\t$rd, $rs, $rt">,
-                   ISA_MIPS3_NOT_32R6_64R6;
+                   ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def DUDivIMacro : MipsAsmPseudoInst<(outs GPR64Opnd:$rd),
                                       (ins GPR64Opnd:$rs, imm64:$imm),
                                       "ddivu\t$rd, $rs, $imm">,
-                    ISA_MIPS3_NOT_32R6_64R6;
+                    ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 
   // GAS expands 'div' and 'ddiv' differently when the destination
   // register is $zero and the instruction is in the two operand
@@ -1161,11 +1166,11 @@ let AdditionalPredicates = [NotInMicroMips] in {
   def : MipsInstAlias<"ddiv $rs, $rt", (DSDivMacro GPR64Opnd:$rs,
                                                GPR64Opnd:$rs,
                                                GPR64Opnd:$rt), 0>,
-        ISA_MIPS3_NOT_32R6_64R6;
+        ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def : MipsInstAlias<"ddiv $rd, $imm", (DSDivIMacro GPR64Opnd:$rd,
                                                      GPR64Opnd:$rd,
                                                      imm64:$imm), 0>,
-        ISA_MIPS3_NOT_32R6_64R6;
+        ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 
   // GAS expands 'divu' and 'ddivu' differently when the destination
   // register is $zero and the instruction is in the two operand
@@ -1174,43 +1179,43 @@ let AdditionalPredicates = [NotInMicroMips] in {
   def : MipsInstAlias<"ddivu $rt, $rs", (DUDivMacro GPR64Opnd:$rt,
                                                     GPR64Opnd:$rt,
                                                     GPR64Opnd:$rs), 0>,
-        ISA_MIPS3_NOT_32R6_64R6;
+        ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def : MipsInstAlias<"ddivu $rd, $imm", (DUDivIMacro GPR64Opnd:$rd,
                                                       GPR64Opnd:$rd,
                                                       imm64:$imm), 0>,
-        ISA_MIPS3_NOT_32R6_64R6;
+        ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def DSRemMacro : MipsAsmPseudoInst<(outs GPR64Opnd:$rd),
                                      (ins GPR64Opnd:$rs, GPR64Opnd:$rt),
                                      "drem\t$rd, $rs, $rt">,
-                   ISA_MIPS3_NOT_32R6_64R6;
+                   ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def DSRemIMacro : MipsAsmPseudoInst<(outs GPR64Opnd:$rd),
                                       (ins GPR64Opnd:$rs, simm32_relaxed:$imm),
                                       "drem\t$rd, $rs, $imm">,
-                    ISA_MIPS3_NOT_32R6_64R6;
+                    ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def DURemMacro : MipsAsmPseudoInst<(outs GPR64Opnd:$rd),
                                      (ins GPR64Opnd:$rs, GPR64Opnd:$rt),
                                      "dremu\t$rd, $rs, $rt">,
-                   ISA_MIPS3_NOT_32R6_64R6;
+                   ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def DURemIMacro : MipsAsmPseudoInst<(outs GPR64Opnd:$rd),
                                       (ins GPR64Opnd:$rs, simm32_relaxed:$imm),
                                       "dremu\t$rd, $rs, $imm">,
-                    ISA_MIPS3_NOT_32R6_64R6;
+                    ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def : MipsInstAlias<"drem $rt, $rs", (DSRemMacro GPR64Opnd:$rt,
                                                    GPR64Opnd:$rt,
                                                    GPR64Opnd:$rs), 0>,
-        ISA_MIPS3_NOT_32R6_64R6;
+        ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def : MipsInstAlias<"drem $rd, $imm", (DSRemIMacro GPR64Opnd:$rd,
                                                      GPR64Opnd:$rd,
                                                      simm32_relaxed:$imm), 0>,
-        ISA_MIPS3_NOT_32R6_64R6;
+        ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def : MipsInstAlias<"dremu $rt, $rs", (DURemMacro GPR64Opnd:$rt,
                                                     GPR64Opnd:$rt,
                                                     GPR64Opnd:$rs), 0>,
-        ISA_MIPS3_NOT_32R6_64R6;
+        ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
   def : MipsInstAlias<"dremu $rd, $imm", (DURemIMacro GPR64Opnd:$rd,
                                                       GPR64Opnd:$rd,
                                                       simm32_relaxed:$imm), 0>,
-        ISA_MIPS3_NOT_32R6_64R6;
+        ISA_MIPS3_NOT_32R6_64R6, NOT_ASE_R5900;
 }
 
 def NORImm64 : NORIMM_DESC_BASE<GPR64Opnd, imm64>, GPR_64;
