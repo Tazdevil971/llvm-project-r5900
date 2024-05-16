@@ -245,6 +245,17 @@ MipsSETargetLowering::MipsSETargetLowering(const MipsTargetMachine &TM,
     setOperationAction(ISD::UDIVREM,          MVT::i64, Custom);
   }
 
+  // The R5900 doesn't have 64bit mul/div hardware
+  if (Subtarget.isR5900()) {
+    setOperationAction(ISD::MUL, MVT::i64, Expand);
+    setOperationAction(ISD::SMUL_LOHI, MVT::i64, Expand);
+    setOperationAction(ISD::UMUL_LOHI, MVT::i64, Expand);
+    setOperationAction(ISD::MULHS, MVT::i64, Expand);
+    setOperationAction(ISD::MULHU, MVT::i64, Expand);
+    setOperationAction(ISD::SDIVREM, MVT::i64, Expand);
+    setOperationAction(ISD::UDIVREM, MVT::i64, Expand);
+  }
+
   setOperationAction(ISD::INTRINSIC_WO_CHAIN, MVT::i64, Custom);
   setOperationAction(ISD::INTRINSIC_W_CHAIN,  MVT::i64, Custom);
 
