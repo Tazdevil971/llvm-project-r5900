@@ -510,7 +510,7 @@ public:
     Match_RequiresNoZeroRegister,
     Match_RequiresSameSrcAndDst,
     Match_NoFCCRegisterForCurrentISA,
-    Match_NonZeroOperandForSync,
+    Match_InvalidOperandForSync,
     Match_NonZeroOperandForMTCX,
     Match_RequiresPosSizeRange0_32,
     Match_RequiresPosSizeRange33_64,
@@ -5810,8 +5810,9 @@ unsigned MipsAsmParser::checkTargetMatchPredicate(MCInst &Inst) {
       return Match_RequiresDifferentSrcAndDst;
     return Match_Success;
   case Mips::SYNC:
-    if (Inst.getOperand(0).getImm() != 0 && !hasMips32())
-      return Match_NonZeroOperandForSync;
+    if (Inst.getOperand(0).getImm() != 0 &&
+        Inst.getOperand(0).getImm() != 0x10 && !hasMips32())
+      return Match_InvalidOperandForSync;
     return Match_Success;
   case Mips::MFC0:
   case Mips::MTC0:
@@ -5969,9 +5970,8 @@ bool MipsAsmParser::matchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
 
     return Error(ErrorLoc, "invalid operand for instruction");
   }
-  case Match_NonZeroOperandForSync:
-    return Error(IDLoc,
-                 "s-type must be zero or unspecified for pre-MIPS32 ISAs");
+  case Match_InvalidOperandForSync:
+    return Error(IDLoc, "invalid s-type for pre-MIPS32 ISAs");
   case Match_NonZeroOperandForMTCX:
     return Error(IDLoc, "selector must be zero for pre-MIPS32 ISAs");
   case Match_MnemonicFail:
