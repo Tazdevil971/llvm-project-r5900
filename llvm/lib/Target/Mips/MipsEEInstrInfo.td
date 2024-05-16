@@ -16,3 +16,6 @@ class EeEi<string opstr, InstrItinClass itin = NoItinerary> :
 
 def EE_EI : EeEi<"ei", II_EI>, EE_EI_FM<0>, ASE_R5900;
 def EE_DI : EeEi<"di", II_DI>, EE_EI_FM<1>, ASE_R5900;
+
+def : MipsInstAlias<"sync.l", (SYNC 0), 1>, ASE_R5900;
+def : MipsInstAlias<"sync.p", (SYNC 16), 1>, ASE_R5900;
