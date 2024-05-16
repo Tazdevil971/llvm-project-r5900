@@ -2,6 +2,6 @@
 #
 # RUN: llvm-mc %s -triple=mips64-ps2-elf -show-encoding -mcpu=r5900 | FileCheck %s
 
-# TODO: Actually populate this
 foo:
-    nop # CHECK: nop # encoding: [0x00,0x00,0x00,0x00]
+    ei  # CHECK: ei  # encoding: [0x42,0x00,0x00,0x38]
+    di  # CHECK: di  # encoding: [0x42,0x00,0x00,0x39]

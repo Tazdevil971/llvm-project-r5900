@@ -452,6 +452,7 @@ def : InstRW<[GenericWriteCOP0], (instrs MTC0)>;
 def : InstRW<[GenericWriteCOP0], (instrs EVP, DVP)>;
 
 def : InstRW<[GenericWriteCOP0], (instrs DI, EI)>;
+def : InstRW<[GenericWriteCOP0], (instrs EE_DI, EE_EI)>;
 
 def : InstRW<[GenericWriteCOP0], (instrs EHB, PAUSE, WAIT)>;
 
