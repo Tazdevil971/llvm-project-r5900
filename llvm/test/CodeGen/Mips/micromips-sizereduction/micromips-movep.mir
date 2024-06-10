@@ -26,7 +26,7 @@ body:             |
     ; CHECK: ADDIUSP_MM -24
     ; CHECK: CFI_INSTRUCTION def_cfa_offset 24
     ; CHECK: SWSP_MM killed $ra, $sp, 20 :: (store (s32) into %stack.0)
-    ; CHECK: CFI_INSTRUCTION offset $ra_64, -4
+    ; CHECK: CFI_INSTRUCTION offset $ra_128, -4
     ; CHECK: JAL_MM @g, csr_o32, implicit-def dead $ra, implicit-def $sp, implicit-def $v0, implicit-def $v1
     ; CHECK: $a0, $a1 = MOVEP_MM $v0, $v1
     ; CHECK: JAL_MM @f, csr_o32, implicit-def dead $ra, implicit $a0, implicit $a1, implicit-def $sp, implicit-def $v0, implicit-def $v1
@@ -61,7 +61,7 @@ body:             |
     ; CHECK: ADDIUSP_MM -24
     ; CHECK: CFI_INSTRUCTION def_cfa_offset 24
     ; CHECK: SWSP_MM killed $ra, $sp, 20 :: (store (s32) into %stack.0)
-    ; CHECK: CFI_INSTRUCTION offset $ra_64, -4
+    ; CHECK: CFI_INSTRUCTION offset $ra_128, -4
     ; CHECK: JAL_MM @g, csr_o32, implicit-def dead $ra, implicit-def $sp, implicit-def $v0, implicit-def $v1
     ; CHECK: $a0, $a1 = MOVEP_MM $v0, $v1
     ; CHECK: JAL_MM @f, csr_o32, implicit-def dead $ra, implicit $a0, implicit $a1, implicit-def $sp, implicit-def $v0, implicit-def $v1

@@ -21,16 +21,16 @@
 # CHECK: DW_TAG_GNU_call_site
 # CHECK-NEXT: DW_AT_abstract_origin {{.*}} "fn1"
 # CHECK: DW_TAG_GNU_call_site_parameter
-# CHECK-NEXT:   DW_AT_location      (DW_OP_reg5 A1_64)
-# CHECK-NEXT:   DW_AT_GNU_call_site_value   (DW_OP_breg16 S0_64+0)
+# CHECK-NEXT:   DW_AT_location      (DW_OP_reg5 A1_128)
+# CHECK-NEXT:   DW_AT_GNU_call_site_value   (DW_OP_breg16 S0_128+0)
 # CHECK-EMPTY: 
 # CHECK-NEXT: DW_TAG_GNU_call_site_parameter
-# CHECK-NEXT:   DW_AT_location      (DW_OP_reg4 A0_64)
+# CHECK-NEXT:   DW_AT_location      (DW_OP_reg4 A0_128)
 # CHECK-NEXT:   DW_AT_GNU_call_site_value   (DW_OP_constu 0x2c)
 # CHECK-EMPTY: 
 # CHECK-NEXT: DW_TAG_GNU_call_site_parameter
-# CHECK-NEXT:   DW_AT_location      (DW_OP_reg6 A2_64)
-# CHECK-NEXT:   DW_AT_GNU_call_site_value   (DW_OP_breg16 S0_64+10)
+# CHECK-NEXT:   DW_AT_location      (DW_OP_reg6 A2_128)
+# CHECK-NEXT:   DW_AT_GNU_call_site_value   (DW_OP_breg16 S0_128+10)
 --- |
   ; ModuleID = 'mips64.ll'
   source_filename = "m64.c"

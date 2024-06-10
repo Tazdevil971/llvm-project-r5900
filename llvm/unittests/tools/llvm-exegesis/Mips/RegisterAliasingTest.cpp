@@ -11,6 +11,7 @@
 #include <cassert>
 #include <memory>
 
+#include "MCTargetDesc/MipsMCTargetDesc.h"
 #include "MipsInstrInfo.h"
 #include "TestBase.h"
 #include "llvm/MC/TargetRegistry.h"
@@ -30,7 +31,8 @@ TEST_F(MipsRegisterAliasingTest, TrackSimpleRegister) {
   std::set<MCPhysReg> ActualAliasedRegisters;
   for (unsigned I : tracker.aliasedBits().set_bits())
     ActualAliasedRegisters.insert(static_cast<MCPhysReg>(I));
-  const std::set<MCPhysReg> ExpectedAliasedRegisters = {Mips::T0, Mips::T0_64};
+  const std::set<MCPhysReg> ExpectedAliasedRegisters = {Mips::T0, Mips::T0_64,
+                                                        Mips::T0_128};
   ASSERT_THAT(ActualAliasedRegisters, ExpectedAliasedRegisters);
   for (MCPhysReg aliased : ExpectedAliasedRegisters) {
     ASSERT_THAT(tracker.getOrigin(aliased), Mips::T0_64);
