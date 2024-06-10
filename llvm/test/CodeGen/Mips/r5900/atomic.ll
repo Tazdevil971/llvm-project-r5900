@@ -54,7 +54,6 @@ define i64 @AtomicLoad64() nounwind {
   ret i64 %1
 }
 
-; TODO(davide.mor): This test is wrong, it should use "lq" instead
 define i128 @AtomicLoad128() nounwind {
 ; R5900O0-LABEL: AtomicLoad128:
 ; R5900O0:       # %bb.0:
@@ -146,7 +145,6 @@ define void @AtomicStore64(i64 signext %val) nounwind {
   ret void
 }
 
-; TODO(davide.mor): This test is wrong, it should use "sq" instead
 define void @AtomicStore128(i128 signext %val) nounwind {
 ; R5900O0-LABEL: AtomicStore128:
 ; R5900O0:       # %bb.0:

@@ -1257,6 +1257,14 @@ DecodeStatus MipsDisassembler::getInstruction(MCInst &Instr, uint64_t &Size,
       return Result;
   }
 
+  if (isR5900()) {
+    LLVM_DEBUG(dbgs() << "Trying EE table (32-bit opcodes):\n");
+    Result =
+        decodeInstruction(DecoderTableEE32, Instr, Insn, Address, this, STI);
+    if (Result != MCDisassembler::Fail)
+      return Result;
+  }
+
   if (hasMips32r6() && isGP64()) {
     LLVM_DEBUG(
         dbgs() << "Trying Mips32r6_64r6 (GPR64) table (32-bit opcodes):\n");

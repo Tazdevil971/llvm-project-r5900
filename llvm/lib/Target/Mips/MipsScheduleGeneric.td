@@ -452,7 +452,6 @@ def : InstRW<[GenericWriteCOP0], (instrs MTC0)>;
 def : InstRW<[GenericWriteCOP0], (instrs EVP, DVP)>;
 
 def : InstRW<[GenericWriteCOP0], (instrs DI, EI)>;
-def : InstRW<[GenericWriteCOP0], (instrs EE_DI, EE_EI)>;
 
 def : InstRW<[GenericWriteCOP0], (instrs EHB, PAUSE, WAIT)>;
 
@@ -1021,6 +1020,12 @@ def : InstRW<[GenericWriteFPULoad], (instrs LDC1_D64_MMR6)>;
 // ======
 
 def : InstRW<[GenericWriteFPUMoveGPRFPU], (instrs DMFC1, DMTC1)>;
+
+// MIPS EE
+// =======
+
+def : InstRW<[GenericWriteCOP0], (instrs EE_DI, EE_EI)>;
+def : InstRW<[GenericWriteLoad], (instrs EE_LQ, EE_SQ)>;
 
 // MIPS DSP ASE, HasDSP
 // ====================

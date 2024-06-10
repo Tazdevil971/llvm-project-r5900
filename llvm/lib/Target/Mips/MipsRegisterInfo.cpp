@@ -71,6 +71,7 @@ MipsRegisterInfo::getRegPressureLimit(const TargetRegisterClass *RC,
     return 0;
   case Mips::GPR32RegClassID:
   case Mips::GPR64RegClassID:
+  case Mips::GPR128RegClassID:
   case Mips::DSPRRegClassID: {
     const TargetFrameLowering *TFI = MF.getSubtarget().getFrameLowering();
     return 28 - TFI->hasFP(MF);
@@ -194,10 +195,17 @@ getReservedRegs(const MachineFunction &MF) const {
   for (MCPhysReg R : ReservedGPR64)
     Reserved.set(R);
 
+  // Reserve 128bit registers for EE
+  Reserved.set(Mips::ZERO_128);
+  Reserved.set(Mips::K0_128);
+  Reserved.set(Mips::K1_128);
+  Reserved.set(Mips::SP_128);
+
   // For mno-abicalls, GP is a program invariant!
   if (!Subtarget.isABICalls()) {
     Reserved.set(Mips::GP);
     Reserved.set(Mips::GP_64);
+    Reserved.set(Mips::GP_128);
   }
 
   if (Subtarget.isFP64bit()) {
@@ -216,6 +224,7 @@ getReservedRegs(const MachineFunction &MF) const {
     else {
       Reserved.set(Mips::FP);
       Reserved.set(Mips::FP_64);
+      Reserved.set(Mips::FP_128);
 
       // Reserve the base register if we need to both realign the stack and
       // allocate variable-sized objects at runtime. This should test the
@@ -223,6 +232,7 @@ getReservedRegs(const MachineFunction &MF) const {
       if (hasStackRealignment(MF) && MF.getFrameInfo().hasVarSizedObjects()) {
         Reserved.set(Mips::S7);
         Reserved.set(Mips::S7_64);
+        Reserved.set(Mips::S7_128);
       }
     }
   }
@@ -257,6 +267,7 @@ getReservedRegs(const MachineFunction &MF) const {
   if (Subtarget.useSmallSection()) {
     Reserved.set(Mips::GP);
     Reserved.set(Mips::GP_64);
+    Reserved.set(Mips::GP_128);
   }
 
   return Reserved;
