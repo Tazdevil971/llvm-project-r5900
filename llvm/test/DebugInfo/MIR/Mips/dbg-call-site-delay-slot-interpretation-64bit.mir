@@ -19,14 +19,14 @@
 # CHECK-NEXT:     DW_AT_abstract_origin {{.*}} "sum"
 # CHECK-NEXT:     DW_AT_low_pc
 # CHECK-EMPTY:
-## Parameter forwarding register A1_64 is set in call delay slot.
+## Parameter forwarding register A1_128 is set in call delay slot.
 # CHECK-NEXT:     DW_TAG_GNU_call_site_parameter
-# CHECK-NEXT:       DW_AT_location      (DW_OP_reg5 A1_64)
-# CHECK-NEXT:       DW_AT_GNU_call_site_value   (DW_OP_breg17 S1_64+0)
+# CHECK-NEXT:       DW_AT_location      (DW_OP_reg5 A1_128)
+# CHECK-NEXT:       DW_AT_GNU_call_site_value   (DW_OP_breg17 S1_128+0)
 # CHECK-EMPTY:
 # CHECK-NEXT:     DW_TAG_GNU_call_site_parameter
-# CHECK-NEXT:       DW_AT_location      (DW_OP_reg4 A0_64)
-# CHECK-NEXT:       DW_AT_GNU_call_site_value   (DW_OP_breg17 S1_64+0)
+# CHECK-NEXT:       DW_AT_location      (DW_OP_reg4 A0_128)
+# CHECK-NEXT:       DW_AT_GNU_call_site_value   (DW_OP_breg17 S1_128+0)
 
 --- |
   ; ModuleID = 'm.ll'

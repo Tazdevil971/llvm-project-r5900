@@ -12,17 +12,17 @@
 #CHECK-NEXT: DW_AT_abstract_origin	{{.*}} "foo"
 
 #CHECK: DW_TAG_GNU_call_site_parameter
-#CHECK-NEXT: DW_AT_location	(DW_OP_reg6 A2_64)
+#CHECK-NEXT: DW_AT_location	(DW_OP_reg6 A2_128)
 #CHECK-NEXT: DW_AT_GNU_call_site_value	(DW_OP_lit0)
 #CHECK-EMPTY:
 #CHECK-NEXT: DW_TAG_GNU_call_site_parameter
-#CHECK-NEXT:   DW_AT_location	(DW_OP_reg4 A0_64)
-#CHECK-NEXT:   DW_AT_GNU_call_site_value	(DW_OP_GNU_entry_value(DW_OP_reg5 A1_64))
+#CHECK-NEXT:   DW_AT_location	(DW_OP_reg4 A0_128)
+#CHECK-NEXT:   DW_AT_GNU_call_site_value	(DW_OP_GNU_entry_value(DW_OP_reg5 A1_128))
 #CHECK-EMPTY:
 ## The parameter, which value is loaded by COPY instr using sub-register, should be omitted.
 #CHECK-NOT: DW_TAG_GNU_call_site_parameter
-#CHECK-NOT:   DW_AT_location	(DW_OP_reg5 A1_64)
-#CHECK-NOT:   DW_AT_GNU_call_site_value	(DW_OP_GNU_entry_value(DW_OP_reg4 A0_64))
+#CHECK-NOT:   DW_AT_location	(DW_OP_reg5 A1_128)
+#CHECK-NOT:   DW_AT_GNU_call_site_value	(DW_OP_GNU_entry_value(DW_OP_reg4 A0_128))
 --- |
   ; ModuleID = 'm.ll'
   source_filename = "m.c"
