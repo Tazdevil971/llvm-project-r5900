@@ -11,6 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "MCTargetDesc/MipsMCNaCl.h"
+#include "MCTargetDesc/MipsMCTargetDesc.h"
 #include "Mips.h"
 #include "MipsInstrInfo.h"
 #include "MipsSubtarget.h"
@@ -39,6 +40,7 @@
 #include "llvm/Support/Casting.h"
 #include "llvm/Support/CodeGen.h"
 #include "llvm/Support/CommandLine.h"
+#include "llvm/Support/Debug.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Target/TargetMachine.h"
 #include <algorithm>
@@ -287,6 +289,9 @@ namespace {
                      BB2BrMap &BrMap) const;
 
     bool terminateSearch(const MachineInstr &Candidate) const;
+
+    // Check wether this branch is part of a short loop
+    bool isShortLoopBranch(const MachineInstr &MI) const;
 
     const TargetMachine *TM = nullptr;
   };
@@ -609,9 +614,12 @@ bool MipsDelaySlotFiller::runOnMachineBasicBlock(MachineBasicBlock &MBB) {
       continue;
 
     // Delay slot filling is disabled at -O0, or in microMIPS32R6.
+    // In the R5900 delay slot filling is also disabled for branches that are
+    // part of a short loop
     if (!DisableDelaySlotFiller &&
         (TM->getOptLevel() != CodeGenOptLevel::None) &&
-        !(InMicroMipsMode && STI.hasMips32r6())) {
+        !(InMicroMipsMode && STI.hasMips32r6()) &&
+        !(STI.isR5900() && isShortLoopBranch(*I))) {
 
       bool Filled = false;
 
@@ -964,6 +972,57 @@ bool MipsDelaySlotFiller::terminateSearch(const MachineInstr &Candidate) const {
   return (Candidate.isTerminator() || Candidate.isCall() ||
           Candidate.isPosition() || Candidate.isInlineAsm() ||
           Candidate.hasUnmodeledSideEffects());
+}
+
+bool MipsDelaySlotFiller::isShortLoopBranch(const MachineInstr &MI) const {
+  // First check if it is one of the affected instructions
+  unsigned Opc = MI.getOpcode();
+  bool IsBranch = Opc == Mips::BEQ || Opc == Mips::BEQL || Opc == Mips::BNE ||
+                  Opc == Mips::BNEL;
+
+  // TODO(davide.mor): Are Link Likely instructions actually problematic?
+  bool IsBranchZero =
+      Opc == Mips::BGEZ || Opc == Mips::BGEZL || Opc == Mips::BGEZAL ||
+      Opc == Mips::BGEZALL || Opc == Mips::BGTZ || Opc == Mips::BGTZL ||
+      Opc == Mips::BLEZ || Opc == Mips::BLEZL || Opc == Mips::BLTZ ||
+      Opc == Mips::BLTZL || Opc == Mips::BLTZAL || Opc == Mips::BLTZALL;
+
+  if (!IsBranch && !IsBranchZero)
+    return false;
+
+  LLVM_DEBUG(dbgs() << DEBUG_TYPE ": possible short loop branch"; MI.dump());
+
+  const MachineOperand &Target = MI.getOperand(IsBranch ? 2 : 1);
+  assert(Target.isMBB() && "Operand is not actually a MachineBasicBlock");
+
+  MachineBasicBlock *MBB = Target.getMBB();
+  unsigned InstructionCount = 0;
+  while (true) {
+    for (Iter I = MBB->begin(); I != MBB->end(); ++I) {
+      // Ignore instructions that aren't actually real
+      if (I->isTransient())
+        continue;
+
+      // We reached the starting point (the branch), this is a short loop!
+      if (&*I == &MI) {
+        LLVM_DEBUG(dbgs() << DEBUG_TYPE ": found short loop!\n");
+        return true;
+      }
+
+      // The loop can't contain more than 6 instructions or a jump/branch
+      // instruction
+      InstructionCount++;
+      if (InstructionCount >= 6 || I->isBranch() || I->isCall())
+        return false;
+    }
+
+    assert(MBB->succ_size() <= 1 && "Ignored interior branch in MBB");
+    // This block has no successors, we are done here
+    if (MBB->succ_size() != 1)
+      return false;
+
+    MBB = *MBB->succ_begin();
+  }
 }
 
 /// createMipsDelaySlotFillerPass - Returns a pass that fills in delay
