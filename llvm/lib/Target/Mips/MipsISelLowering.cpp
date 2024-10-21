@@ -1158,8 +1158,11 @@ static SDValue performADDCombine(SDNode *N, SelectionDAG &DAG,
                                  const MipsSubtarget &Subtarget) {
   // (add v0 (mul v1, v2)) => (madd v1, v2, v0)
   if (DCI.isBeforeLegalizeOps()) {
-    if (Subtarget.hasMips32() && !Subtarget.hasMips32r6() &&
-        !Subtarget.inMips16Mode() && N->getValueType(0) == MVT::i64)
+    bool HasMadd = (Subtarget.hasMips32() && !Subtarget.hasMips32r6() &&
+                    !Subtarget.inMips16Mode()) ||
+                   Subtarget.isR5900();
+
+    if (HasMadd && N->getValueType(0) == MVT::i64)
       return performMADD_MSUBCombine(N, DAG, Subtarget);
 
     return SDValue();

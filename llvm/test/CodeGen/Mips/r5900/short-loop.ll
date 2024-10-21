@@ -27,8 +27,7 @@ define i32 @mypow(i32 %base, i32 %n) {
 ; R5900-NEXT:    move $2, $4
 ; R5900-NEXT:  .LBB0_1: # %loop
 ; R5900-NEXT:    # =>This Inner Loop Header: Depth=1
-; R5900-NEXT:    mult $2, $4
-; R5900-NEXT:    mflo $2
+; R5900-NEXT:    mult $2, $2, $4
 ; R5900-NEXT:    addiu $3, $3, -1
 ; R5900-NEXT:    bnez $3, .LBB0_1
 ; R5900-NEXT:    nop

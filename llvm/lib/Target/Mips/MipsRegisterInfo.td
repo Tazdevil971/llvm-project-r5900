@@ -12,6 +12,7 @@
 let Namespace = "Mips" in {
 def sub_32     : SubRegIndex<32>;
 def sub_64     : SubRegIndex<64>;
+def sub_64_top : SubRegIndex<64, 64>;
 def sub_lo     : SubRegIndex<32>;
 def sub_hi     : SubRegIndex<32, 32>;
 def sub_dsp16_19 : SubRegIndex<4, 16>;
@@ -315,6 +316,18 @@ let Namespace = "Mips" in {
   def P1 : MipsReg<1, "p1">;
   def P2 : MipsReg<2, "p2">;
 
+  // R5900 EE Core/MMI registers
+  def EE_SA : Register<"">;
+
+  let SubRegIndices = [sub_32] in {
+  def HI1_64  : RegisterWithSubRegs<"", [HI1]>;
+  def LO1_64  : RegisterWithSubRegs<"", [LO1]>;
+  }
+
+  let SubRegIndices = [sub_64, sub_64_top], CoveredBySubRegs = 1 in {
+  def EE_LO_128 : RegisterWithSubRegs<"", [LO0_64, LO1_64]>;
+  def EE_HI_128 : RegisterWithSubRegs<"", [HI0_64, HI1_64]>;
+  }
 }
 
 //===----------------------------------------------------------------------===//

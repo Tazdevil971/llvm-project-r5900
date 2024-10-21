@@ -256,6 +256,13 @@ MipsSETargetLowering::MipsSETargetLowering(const MipsTargetMachine &TM,
     setOperationAction(ISD::UDIVREM, MVT::i64, Expand);
   }
 
+  // TODO: For some reason the R5900 requires this? Why?
+  // (Probably required due to the quirky nature of having 32bit mul HW but
+  // 64bit registers)
+  if (Subtarget.isR5900()) {
+    setOperationAction(ISD::BUILD_PAIR, MVT::i64, Expand);
+  }
+
   setOperationAction(ISD::INTRINSIC_WO_CHAIN, MVT::i64, Custom);
   setOperationAction(ISD::INTRINSIC_W_CHAIN,  MVT::i64, Custom);
 
