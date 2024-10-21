@@ -1027,6 +1027,11 @@ def : InstRW<[GenericWriteFPUMoveGPRFPU], (instrs DMFC1, DMTC1)>;
 def : InstRW<[GenericWriteCOP0], (instrs EE_DI, EE_EI)>;
 def : InstRW<[GenericWriteLoad], (instrs EE_LQ, EE_SQ)>;
 
+def : InstRW<[GenericWriteALU], (instrs EE_MOVN_I_I, EE_MOVZ_I_I)>;
+def : InstRW<[GenericWriteALU], (instrs EE_MOVN_I_I64, EE_MOVN_I64_I, 
+                                 EE_MOVN_I64_I64, EE_MOVZ_I_I64, 
+                                 EE_MOVZ_I64_I, EE_MOVZ_I64_I64)>;
+
 // MIPS DSP ASE, HasDSP
 // ====================
 

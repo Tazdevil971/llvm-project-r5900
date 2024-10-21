@@ -280,8 +280,8 @@ let usesCustomInserter = 1, hasNoSchedulingInfo = 1 in {
     ISA_MIPS1_NOT_4_32;
 }
 
-def PseudoSELECT_I : Select_Pseudo<GPR32Opnd>;
-def PseudoSELECT_I64 : Select_Pseudo<GPR64Opnd>;
+def PseudoSELECT_I : Select_Pseudo<GPR32Opnd>, NOT_ASE_R5900;
+def PseudoSELECT_I64 : Select_Pseudo<GPR64Opnd>, NOT_ASE_R5900;
 def PseudoSELECT_S : Select_Pseudo<FGR32Opnd>;
 def PseudoSELECT_D32 : Select_Pseudo<AFGR64Opnd>, FGR_32;
 def PseudoSELECT_D64 : Select_Pseudo<FGR64Opnd>, FGR_64;
@@ -305,5 +305,5 @@ class D_SELECT_CLASS<RegisterOperand RC> :
   ISA_MIPS1_NOT_4_32;
 }
 
-def PseudoD_SELECT_I   : D_SELECT_CLASS<GPR32Opnd>;
-def PseudoD_SELECT_I64 : D_SELECT_CLASS<GPR64Opnd>;
+def PseudoD_SELECT_I   : D_SELECT_CLASS<GPR32Opnd>, NOT_ASE_R5900;
+def PseudoD_SELECT_I64 : D_SELECT_CLASS<GPR64Opnd>, NOT_ASE_R5900;
