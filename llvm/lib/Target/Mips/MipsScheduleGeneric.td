@@ -1032,6 +1032,14 @@ def : InstRW<[GenericWriteALU], (instrs EE_MOVN_I_I64, EE_MOVN_I64_I,
                                  EE_MOVN_I64_I64, EE_MOVZ_I_I64, 
                                  EE_MOVZ_I64_I, EE_MOVZ_I64_I64)>;
 
+def : InstRW<[GenericWriteMul], (instrs EE_MULT, EE_MULTU, 
+                                 EE_MADD, EE_MADDU)>;
+
+def : InstRW<[GenericWriteMul], (instrs EE_MULT1, EE_MULTU1, 
+                                 EE_MADD1, EE_MADDU1, EE_SDIV1, 
+                                 EE_UDIV1, EE_MTLO1, EE_MTHI1, 
+                                 EE_MFLO1, EE_MFHI1)>;
+
 // MIPS DSP ASE, HasDSP
 // ====================
 
