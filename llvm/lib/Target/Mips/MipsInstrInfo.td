@@ -2358,9 +2358,9 @@ let Uses = [V0, V1], isTerminator = 1, isReturn = 1,
 /// Multiply and Divide Instructions.
 let AdditionalPredicates = [NotInMicroMips] in {
   def MULT  : MMRel, Mult<"mult", II_MULT, GPR32Opnd, [HI0, LO0]>,
-              MULT_FM<0, 0x18>, ISA_MIPS1_NOT_32R6_64R6;
+              MULT_FM<0, 0x18>, ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_R5900;
   def MULTu : MMRel, Mult<"multu", II_MULTU, GPR32Opnd, [HI0, LO0]>,
-              MULT_FM<0, 0x19>, ISA_MIPS1_NOT_32R6_64R6;
+              MULT_FM<0, 0x19>, ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_R5900;
   def SDIV  : MMRel, Div<"div", II_DIV, GPR32Opnd, [HI0, LO0]>,
               MULT_FM<0, 0x1a>, ISA_MIPS1_NOT_32R6_64R6;
   def UDIV  : MMRel, Div<"divu", II_DIVU, GPR32Opnd, [HI0, LO0]>,
@@ -2415,9 +2415,9 @@ let AdditionalPredicates = [NotInMicroMips] in {
 
 let AdditionalPredicates = [NotDSP] in {
 def PseudoMULT  : MultDivPseudo<MULT, ACC64, GPR32Opnd, MipsMult, II_MULT>,
-                  ISA_MIPS1_NOT_32R6_64R6;
+                  ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_R5900;
 def PseudoMULTu : MultDivPseudo<MULTu, ACC64, GPR32Opnd, MipsMultu, II_MULTU>,
-                  ISA_MIPS1_NOT_32R6_64R6;
+                  ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_R5900;
 def PseudoMFHI : PseudoMFLOHI<GPR32, ACC64, MipsMFHI>, ISA_MIPS1_NOT_32R6_64R6;
 def PseudoMFLO : PseudoMFLOHI<GPR32, ACC64, MipsMFLO>, ISA_MIPS1_NOT_32R6_64R6;
 def PseudoMTLOHI : PseudoMTLOHI<ACC64, GPR32>, ISA_MIPS1_NOT_32R6_64R6;
@@ -3173,7 +3173,7 @@ def : MipsPat<(addc  GPR32:$src, immSExt16:$imm),
 // the MUL instruction.
 def : MipsPat<(mul GPR32:$lhs, GPR32:$rhs),
               (PseudoMFLO (PseudoMULT GPR32:$lhs, GPR32:$rhs))>,
-      ISA_MIPS1_NOT_32R6_64R6;
+      ISA_MIPS1_NOT_32R6_64R6, NOT_ASE_R5900;
 
 // SYNC
 def : MipsPat<(MipsSync (i32 immz)),

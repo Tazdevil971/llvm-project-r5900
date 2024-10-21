@@ -84,6 +84,10 @@ static DecodeStatus DecodeGPR64RegisterClass(MCInst &Inst, unsigned RegNo,
                                              uint64_t Address,
                                              const MCDisassembler *Decoder);
 
+static DecodeStatus DecodeGPR128RegisterClass(MCInst &Inst, unsigned RegNo,
+                                              uint64_t Address,
+                                              const MCDisassembler *Decoder);
+
 static DecodeStatus DecodeCPU16RegsRegisterClass(MCInst &Inst, unsigned RegNo,
                                                  uint64_t Address,
                                                  const MCDisassembler *Decoder);
@@ -1356,6 +1360,17 @@ static DecodeStatus DecodeGPR64RegisterClass(MCInst &Inst, unsigned RegNo,
     return MCDisassembler::Fail;
 
   unsigned Reg = getReg(Decoder, Mips::GPR64RegClassID, RegNo);
+  Inst.addOperand(MCOperand::createReg(Reg));
+  return MCDisassembler::Success;
+}
+
+static DecodeStatus DecodeGPR128RegisterClass(MCInst &Inst, unsigned RegNo,
+                                              uint64_t Address,
+                                              const MCDisassembler *Decoder) {
+  if (RegNo > 31)
+    return MCDisassembler::Fail;
+
+  unsigned Reg = getReg(Decoder, Mips::GPR128RegClassID, RegNo);
   Inst.addOperand(MCOperand::createReg(Reg));
   return MCDisassembler::Success;
 }
