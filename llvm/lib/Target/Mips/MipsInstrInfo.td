@@ -299,9 +299,10 @@ class ISA_MIPS1_NOT_MIPS3 {
   list<Predicate> InsnPredicates = [NotMips3];
   list<Predicate> EncodingPredicates = [HasStdEnc];
 }
-class ISA_MIPS1_NOT_4_32 {
+class ISA_MIPS1_NOT_4_32_R5900 {
   list<Predicate> InsnPredicates = [NotMips4_32];
   list<Predicate> EncodingPredicates = [HasStdEnc];
+  list<Predicate> ASEPredicate = [NotR5900];
 }
 class ISA_MIPS1_NOT_32R6_64R6 {
   list<Predicate> InsnPredicates = [NotMips32r6, NotMips64r6];

@@ -3,6 +3,7 @@
 ; RUN: llc -march=mips     -mcpu=mips32r2               -relocation-model=pic < %s | FileCheck %s -check-prefixes=ALL,32-CMOV
 ; RUN: llc -march=mips     -mcpu=mips32r6               -relocation-model=pic < %s | FileCheck %s -check-prefixes=ALL,32-CMP
 ; RUN: llc -march=mips64el -mcpu=mips4                  -relocation-model=pic < %s | FileCheck %s -check-prefixes=ALL,64-CMOV
+; RUN: llc -march=mips64el -mcpu=r5900                  -relocation-model=pic < %s | FileCheck %s -check-prefixes=ALL,64-CMOV
 ; RUN: llc -march=mips64el -mcpu=mips64                 -relocation-model=pic < %s | FileCheck %s -check-prefixes=ALL,64-CMOV
 ; RUN: llc -march=mips64el -mcpu=mips64r6               -relocation-model=pic < %s | FileCheck %s -check-prefixes=ALL,64-CMP
 

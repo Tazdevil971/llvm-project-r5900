@@ -267,17 +267,17 @@ let usesCustomInserter = 1, hasNoSchedulingInfo = 1 in {
   class Select_Pseudo<RegisterOperand RC> :
     PseudoSE<(outs RC:$dst), (ins GPR32Opnd:$cond, RC:$T, RC:$F),
             [(set RC:$dst, (select GPR32Opnd:$cond, RC:$T, RC:$F))]>,
-    ISA_MIPS1_NOT_4_32;
+    ISA_MIPS1_NOT_4_32_R5900;
 
   class SelectFP_Pseudo_T<RegisterOperand RC> :
     PseudoSE<(outs RC:$dst), (ins FCCRegsOpnd:$cond, RC:$T, RC:$F),
              [(set RC:$dst, (MipsCMovFP_T RC:$T, FCCRegsOpnd:$cond, RC:$F))]>,
-    ISA_MIPS1_NOT_4_32;
+    ISA_MIPS1_NOT_4_32_R5900;
 
   class SelectFP_Pseudo_F<RegisterOperand RC> :
     PseudoSE<(outs RC:$dst), (ins FCCRegsOpnd:$cond, RC:$T, RC:$F),
              [(set RC:$dst, (MipsCMovFP_F RC:$T, FCCRegsOpnd:$cond, RC:$F))]>,
-    ISA_MIPS1_NOT_4_32;
+    ISA_MIPS1_NOT_4_32_R5900;
 }
 
 def PseudoSELECT_I : Select_Pseudo<GPR32Opnd>;
@@ -302,7 +302,7 @@ let usesCustomInserter = 1, hasNoSchedulingInfo = 1 in {
 class D_SELECT_CLASS<RegisterOperand RC> :
   PseudoSE<(outs RC:$dst1, RC:$dst2),
            (ins GPR32Opnd:$cond, RC:$a1, RC:$a2, RC:$b1, RC:$b2), []>,
-  ISA_MIPS1_NOT_4_32;
+  ISA_MIPS1_NOT_4_32_R5900;
 }
 
 def PseudoD_SELECT_I   : D_SELECT_CLASS<GPR32Opnd>;
