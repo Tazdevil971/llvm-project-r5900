@@ -4168,10 +4168,16 @@ parseRegForInlineAsmConstraint(StringRef C, MVT VT) const {
     return std::make_pair(0U, nullptr);
 
   if (Prefix == "$f") { // Parse $f0-$f31.
-    // If the size of FP registers is 64-bit or Reg is an even number, select
-    // the 64-bit register class. Otherwise, select the 32-bit register class.
-    if (VT == MVT::Other)
-      VT = (Subtarget.isFP64bit() || !(Reg % 2)) ? MVT::f64 : MVT::f32;
+    // If the targets is single float only, always select 32-bit registers,
+    // otherwise if the size of FP registers is 64-bit or Reg is an even number,
+    // select the 64-bit register class. Otherwise, select the 32-bit register
+    // class.
+    if (VT == MVT::Other) {
+      if (Subtarget.isSingleFloat())
+        VT = MVT::f32;
+      else
+        VT = (Subtarget.isFP64bit() || !(Reg % 2)) ? MVT::f64 : MVT::f32;
+    }
 
     RC = getRegClassFor(VT);
 
