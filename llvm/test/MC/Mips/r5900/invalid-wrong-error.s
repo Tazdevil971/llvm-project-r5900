@@ -5,7 +5,7 @@
 
 foo:
     # COP3 is not present
-    mfc3 $2, $2, 0  # CHECK: :[[@LINE]]:{{[0-9]+}}: error: unknown instruction, did you mean: mfc0, mfc2?
-    mtc3 $2, $2, 0  # CHECK: :[[@LINE]]:{{[0-9]+}}: error: unknown instruction, did you mean: mtc0, mtc2?
-    dmfc3 $2, $2, 0 # CHECK: :[[@LINE]]:{{[0-9]+}}: error: unknown instruction, did you mean: dmfc0, dmfc2?
-    dmtc3 $2, $2, 0 # CHECK: :[[@LINE]]:{{[0-9]+}}: error: unknown instruction, did you mean: dmtc0, dmtc2?
+    mfc3 $2, $2, 0  # CHECK: :[[@LINE]]:{{[0-9]+}}: error: unknown instruction, did you mean: mfc0, mfc1, mfc2?
+    mtc3 $2, $2, 0  # CHECK: :[[@LINE]]:{{[0-9]+}}: error: unknown instruction, did you mean: mtc0, mtc1, mtc2?
+    dmfc3 $2, $2, 0 # CHECK: :[[@LINE]]:{{[0-9]+}}: error: unknown instruction, did you mean: dmfc0, dmfc1, dmfc2?
+    dmtc3 $2, $2, 0 # CHECK: :[[@LINE]]:{{[0-9]+}}: error: unknown instruction, did you mean: dmtc0, dmtc1, dmtc2?
