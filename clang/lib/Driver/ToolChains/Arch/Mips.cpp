@@ -182,9 +182,6 @@ mips::FloatABI mips::getMipsFloatABI(const Driver &D, const ArgList &Args,
     if (Triple.isOSFreeBSD()) {
       // For FreeBSD, assume "soft" on all flavors of MIPS.
       ABI = mips::FloatABI::Soft;
-    } else if (CPUName == "r5900") {
-      // Currently the r5900 does not support hard FP
-      ABI = mips::FloatABI::Soft;
     } else {
       // Assume "hard", because it's a default value used by gcc.
       // When we start to recognize specific target MIPS processors,

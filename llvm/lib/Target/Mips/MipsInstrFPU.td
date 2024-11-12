@@ -288,8 +288,10 @@ multiclass C_COND_M<string TypeStr, RegisterOperand RC, bits<5> fmt,
     let BaseOpcode = "c.f."#NAME;
     let isCommutable = 1;
   }
-  def C_UN_#NAME : MMRel, C_COND_FT<"un", TypeStr, RC, itin>,
-                   C_COND_FM<fmt, 1> {
+  def C_UN_#NAME : MMRel,
+                   C_COND_FT<"un", TypeStr, RC, itin>,
+                   C_COND_FM<fmt, 1>,
+                   NOT_ASE_R5900 {
     let BaseOpcode = "c.un."#NAME;
     let isCommutable = 1;
   }
@@ -298,8 +300,10 @@ multiclass C_COND_M<string TypeStr, RegisterOperand RC, bits<5> fmt,
     let BaseOpcode = "c.eq."#NAME;
     let isCommutable = 1;
   }
-  def C_UEQ_#NAME : MMRel, C_COND_FT<"ueq", TypeStr, RC, itin>,
-                    C_COND_FM<fmt, 3> {
+  def C_UEQ_#NAME : MMRel,
+                    C_COND_FT<"ueq", TypeStr, RC, itin>,
+                    C_COND_FM<fmt, 3>,
+                    NOT_ASE_R5900 {
     let BaseOpcode = "c.ueq."#NAME;
     let isCommutable = 1;
   }
@@ -307,50 +311,70 @@ multiclass C_COND_M<string TypeStr, RegisterOperand RC, bits<5> fmt,
                     C_COND_FM<fmt, 4> {
     let BaseOpcode = "c.olt."#NAME;
   }
-  def C_ULT_#NAME : MMRel, C_COND_FT<"ult", TypeStr, RC, itin>,
-                    C_COND_FM<fmt, 5> {
+  def C_ULT_#NAME : MMRel,
+                    C_COND_FT<"ult", TypeStr, RC, itin>,
+                    C_COND_FM<fmt, 5>,
+                    NOT_ASE_R5900 {
     let BaseOpcode = "c.ult."#NAME;
   }
   def C_OLE_#NAME : MMRel, C_COND_FT<"ole", TypeStr, RC, itin>,
                     C_COND_FM<fmt, 6> {
     let BaseOpcode = "c.ole."#NAME;
   }
-  def C_ULE_#NAME : MMRel, C_COND_FT<"ule", TypeStr, RC, itin>,
-                     C_COND_FM<fmt, 7> {
+  def C_ULE_#NAME : MMRel,
+                    C_COND_FT<"ule", TypeStr, RC, itin>,
+                    C_COND_FM<fmt, 7>,
+                    NOT_ASE_R5900 {
     let BaseOpcode = "c.ule."#NAME;
   }
-  def C_SF_#NAME : MMRel, C_COND_FT<"sf", TypeStr, RC, itin>,
-                   C_COND_FM<fmt, 8> {
+  def C_SF_#NAME : MMRel,
+                   C_COND_FT<"sf", TypeStr, RC, itin>,
+                   C_COND_FM<fmt, 8>,
+                   NOT_ASE_R5900 {
     let BaseOpcode = "c.sf."#NAME;
     let isCommutable = 1;
   }
-  def C_NGLE_#NAME : MMRel, C_COND_FT<"ngle", TypeStr, RC, itin>,
-                     C_COND_FM<fmt, 9> {
+  def C_NGLE_#NAME : MMRel,
+                     C_COND_FT<"ngle", TypeStr, RC, itin>,
+                     C_COND_FM<fmt, 9>,
+                     NOT_ASE_R5900 {
     let BaseOpcode = "c.ngle."#NAME;
   }
-  def C_SEQ_#NAME : MMRel, C_COND_FT<"seq", TypeStr, RC, itin>,
-                    C_COND_FM<fmt, 10> {
+  def C_SEQ_#NAME : MMRel,
+                    C_COND_FT<"seq", TypeStr, RC, itin>,
+                    C_COND_FM<fmt, 10>,
+                    NOT_ASE_R5900 {
     let BaseOpcode = "c.seq."#NAME;
     let isCommutable = 1;
   }
-  def C_NGL_#NAME : MMRel, C_COND_FT<"ngl", TypeStr, RC, itin>,
-                    C_COND_FM<fmt, 11> {
+  def C_NGL_#NAME : MMRel,
+                    C_COND_FT<"ngl", TypeStr, RC, itin>,
+                    C_COND_FM<fmt, 11>,
+                    NOT_ASE_R5900 {
     let BaseOpcode = "c.ngl."#NAME;
   }
-  def C_LT_#NAME : MMRel, C_COND_FT<"lt", TypeStr, RC, itin>,
-                   C_COND_FM<fmt, 12> {
+  def C_LT_#NAME : MMRel,
+                   C_COND_FT<"lt", TypeStr, RC, itin>,
+                   C_COND_FM<fmt, 12>,
+                   NOT_ASE_R5900 {
     let BaseOpcode = "c.lt."#NAME;
   }
-  def C_NGE_#NAME : MMRel, C_COND_FT<"nge", TypeStr, RC, itin>,
-                    C_COND_FM<fmt, 13> {
+  def C_NGE_#NAME : MMRel,
+                    C_COND_FT<"nge", TypeStr, RC, itin>,
+                    C_COND_FM<fmt, 13>,
+                    NOT_ASE_R5900 {
     let BaseOpcode = "c.nge."#NAME;
   }
-  def C_LE_#NAME : MMRel, C_COND_FT<"le", TypeStr, RC, itin>,
-                   C_COND_FM<fmt, 14> {
+  def C_LE_#NAME : MMRel,
+                   C_COND_FT<"le", TypeStr, RC, itin>,
+                   C_COND_FM<fmt, 14>,
+                   NOT_ASE_R5900 {
     let BaseOpcode = "c.le."#NAME;
   }
-  def C_NGT_#NAME : MMRel, C_COND_FT<"ngt", TypeStr, RC, itin>,
-                    C_COND_FM<fmt, 15> {
+  def C_NGT_#NAME : MMRel,
+                    C_COND_FT<"ngt", TypeStr, RC, itin>,
+                    C_COND_FM<fmt, 15>,
+                    NOT_ASE_R5900 {
     let BaseOpcode = "c.ngt."#NAME;
   }
 }
@@ -367,19 +391,31 @@ defm D64 : C_COND_M<"d", FGR64Opnd, 17, II_C_CC_D>, ISA_MIPS1_NOT_32R6_64R6,
 // Floating Point Instructions
 //===----------------------------------------------------------------------===//
 let AdditionalPredicates = [NotInMicroMips] in {
-  def ROUND_W_S : MMRel, StdMMR6Rel,
+  def ROUND_W_S : MMRel,
+                  StdMMR6Rel,
                   ABSS_FT<"round.w.s", FGR32Opnd, FGR32Opnd, II_ROUND>,
-                  ABSS_FM<0xc, 16>, ISA_MIPS2;
+                  ABSS_FM<0xc, 16>,
+                  ISA_MIPS2,
+                  NOT_ASE_R5900;
   defm ROUND_W  : ROUND_M<"round.w.d", II_ROUND>, ABSS_FM<0xc, 17>, ISA_MIPS2;
-  def TRUNC_W_S : MMRel, StdMMR6Rel,
+  def TRUNC_W_S : MMRel,
+                  StdMMR6Rel,
                   ABSS_FT<"trunc.w.s", FGR32Opnd, FGR32Opnd, II_TRUNC>,
-                  ABSS_FM<0xd, 16>, ISA_MIPS2;
-  def CEIL_W_S  : MMRel, StdMMR6Rel,
-                  ABSS_FT<"ceil.w.s", FGR32Opnd, FGR32Opnd, II_CEIL>,
-                  ABSS_FM<0xe, 16>, ISA_MIPS2;
-  def FLOOR_W_S : MMRel, StdMMR6Rel,
+                  ABSS_FM<0xd, 16>,
+                  ISA_MIPS2,
+                  NOT_ASE_R5900;
+  def CEIL_W_S : MMRel,
+                 StdMMR6Rel,
+                 ABSS_FT<"ceil.w.s", FGR32Opnd, FGR32Opnd, II_CEIL>,
+                 ABSS_FM<0xe, 16>,
+                 ISA_MIPS2,
+                 NOT_ASE_R5900;
+  def FLOOR_W_S : MMRel,
+                  StdMMR6Rel,
                   ABSS_FT<"floor.w.s", FGR32Opnd, FGR32Opnd, II_FLOOR>,
-                  ABSS_FM<0xf, 16>, ISA_MIPS2;
+                  ABSS_FM<0xf, 16>,
+                  ISA_MIPS2,
+                  NOT_ASE_R5900;
   def CVT_W_S   : MMRel, ABSS_FT<"cvt.w.s", FGR32Opnd, FGR32Opnd, II_CVT>,
                   ABSS_FM<0x24, 16>, ISA_MIPS1;
 
@@ -612,8 +648,12 @@ let DecoderNamespace = "MipsFP64", AdditionalPredicates = [NotInMicroMips] in {
 }
 
 let AdditionalPredicates = [NotInMicroMips] in {
-  def LDC1 : MMRel, StdMMR6Rel, LW_FT<"ldc1", AFGR64Opnd, mem_simm16, II_LDC1,
-                                      load>, LW_FM<0x35>, ISA_MIPS2, FGR_32 {
+  def LDC1 : MMRel,
+             StdMMR6Rel,
+             LW_FT<"ldc1", AFGR64Opnd, mem_simm16, II_LDC1, load>,
+             LW_FM<0x35>,
+             ISA_MIPS2,
+             FGR_32 {
     let BaseOpcode = "LDC132";
   }
   def SDC1 : MMRel, SW_FT<"sdc1", AFGR64Opnd, mem_simm16, II_SDC1, store>,
@@ -835,6 +875,13 @@ def SDC1_M1 : MipsAsmPseudoInst<(outs AFGR64Opnd:$fd),
 //===----------------------------------------------------------------------===//
 // InstAliases.
 //===----------------------------------------------------------------------===//
+
+// In the R5900 the cvt.w.s behaves exactly like the trunc.w.s, so alias it
+def : MipsInstAlias<"trunc.w.s $fd, $fs",
+                    (CVT_W_S FGR32Opnd:$fd, FGR32Opnd:$fs), 1>,
+      HARDFLOAT,
+      ASE_R5900;
+
 def : MipsInstAlias
         <"s.s $fd, $addr", (SWC1 FGR32Opnd:$fd, mem_simm16:$addr), 0>,
       ISA_MIPS2, HARDFLOAT;
@@ -863,51 +910,70 @@ multiclass C_COND_ALIASES<string TypeStr, RegisterOperand RC> {
                       (!cast<Instruction>("C_F_"#NAME) FCC0,
                                                        RC:$fs, RC:$ft), 1>;
   def : MipsInstAlias<!strconcat("c.un.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_UN_"#NAME) FCC0,
-                                                        RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_UN_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.eq.", TypeStr, " $fs, $ft"),
                       (!cast<Instruction>("C_EQ_"#NAME) FCC0,
                                                         RC:$fs, RC:$ft), 1>;
   def : MipsInstAlias<!strconcat("c.ueq.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_UEQ_"#NAME) FCC0,
-                                                         RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_UEQ_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.olt.", TypeStr, " $fs, $ft"),
                       (!cast<Instruction>("C_OLT_"#NAME) FCC0,
                                                          RC:$fs, RC:$ft), 1>;
   def : MipsInstAlias<!strconcat("c.ult.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_ULT_"#NAME) FCC0,
-                                                         RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_ULT_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.ole.", TypeStr, " $fs, $ft"),
                       (!cast<Instruction>("C_OLE_"#NAME) FCC0,
                                                          RC:$fs, RC:$ft), 1>;
   def : MipsInstAlias<!strconcat("c.ule.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_ULE_"#NAME) FCC0,
-                                                         RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_ULE_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.sf.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_SF_"#NAME) FCC0,
-                                                        RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_SF_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.ngle.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_NGLE_"#NAME) FCC0,
-                                                          RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_NGLE_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.seq.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_SEQ_"#NAME) FCC0,
-                                                         RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_SEQ_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.ngl.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_NGL_"#NAME) FCC0,
-                                                         RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_NGL_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.lt.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_LT_"#NAME) FCC0,
-                                                        RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_LT_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.nge.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_NGE_"#NAME) FCC0,
-                                                         RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_NGE_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.le.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_LE_"#NAME) FCC0,
-                                                        RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_LE_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
   def : MipsInstAlias<!strconcat("c.ngt.", TypeStr, " $fs, $ft"),
-                      (!cast<Instruction>("C_NGT_"#NAME) FCC0,
-                                                         RC:$fs, RC:$ft), 1>;
+                      (!cast<Instruction>("C_NGT_"#NAME) FCC0, RC:$fs, RC:$ft),
+                      1>,
+        NOT_ASE_R5900;
 }
+
+def : MipsInstAlias<"c.le.s\t$fs, $ft",
+                    (C_OLE_S FCC0, FGR32Opnd:$fs, FGR32Opnd:$ft), 1>,
+      ASE_R5900;
+def : MipsInstAlias<"c.lt.s\t$fs, $ft",
+                    (C_OLT_S FCC0, FGR32Opnd:$fs, FGR32Opnd:$ft), 1>,
+      ASE_R5900;
 
 multiclass BC1_ALIASES<Instruction BCTrue, string BCTrueString,
                        Instruction BCFalse, string BCFalseString> {

@@ -213,8 +213,9 @@ def FeatureStrictAlign
                        "Disable unaligned load store for r6">;
 
 def FeatureR5900
-    : SubtargetFeature<"r5900", "IsR5900", "true",
-                       "The R5900 Processor", [FeatureMips3, FeatureSoftFloat]>;
+    : SubtargetFeature<
+          "r5900", "IsR5900", "true",
+          "The R5900 Processor", [FeatureMips3, FeatureSingleFloat]>;
 
 //===----------------------------------------------------------------------===//
 // Register File, Calling Conv, Instruction Descriptions
