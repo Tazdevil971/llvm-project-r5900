@@ -12,10 +12,9 @@ define i32 @mypow(i32 %base, i32 %n) {
 ; MIPS3-NEXT:    move $2, $4
 ; MIPS3-NEXT:  .LBB0_1: # %loop
 ; MIPS3-NEXT:    # =>This Inner Loop Header: Depth=1
-; MIPS3-NEXT:    mult $2, $4
 ; MIPS3-NEXT:    addiu $3, $3, -1
 ; MIPS3-NEXT:    bnez $3, .LBB0_1
-; MIPS3-NEXT:    mflo $2
+; MIPS3-NEXT:    addu $2, $2, $4
 ; MIPS3-NEXT:  # %bb.2: # %exit
 ; MIPS3-NEXT:    jr $ra
 ; MIPS3-NEXT:    nop
@@ -27,7 +26,7 @@ define i32 @mypow(i32 %base, i32 %n) {
 ; R5900-NEXT:    move $2, $4
 ; R5900-NEXT:  .LBB0_1: # %loop
 ; R5900-NEXT:    # =>This Inner Loop Header: Depth=1
-; R5900-NEXT:    mult $2, $2, $4
+; R5900-NEXT:    addu $2, $2, $4
 ; R5900-NEXT:    addiu $3, $3, -1
 ; R5900-NEXT:    bnez $3, .LBB0_1
 ; R5900-NEXT:    nop
@@ -40,7 +39,7 @@ entry:
 loop:
     %i = phi i32 [%n, %entry], [%i.dec, %loop]
     %val = phi i32 [%base, %entry], [%val.next, %loop]
-    %val.next = mul i32 %val, %base
+    %val.next = add i32 %val, %base
     %i.dec = sub i32 %i, 1
     %cond = icmp ugt i32 %i.dec, 0
     br i1 %cond, label %loop, label %exit
