@@ -362,15 +362,17 @@ define i32 @UDiv32(i32 signext %a, i32 signext %b) nounwind {
 ; R5900O1:       # %bb.0:
 ; R5900O1-NEXT:    divu $zero, $4, $5
 ; R5900O1-NEXT:    teq $5, $zero, 7
-; R5900O1-NEXT:    jr $ra
 ; R5900O1-NEXT:    mflo $2
+; R5900O1-NEXT:    jr $ra
+; R5900O1-NEXT:    nop
 ;
 ; R5900O2-LABEL: UDiv32:
 ; R5900O2:       # %bb.0:
 ; R5900O2-NEXT:    divu $zero, $4, $5
 ; R5900O2-NEXT:    teq $5, $zero, 7
-; R5900O2-NEXT:    jr $ra
 ; R5900O2-NEXT:    mflo $2
+; R5900O2-NEXT:    jr $ra
+; R5900O2-NEXT:    nop
   %1 = udiv i32 %a, %b
   ret i32 %1
 }
@@ -425,15 +427,17 @@ define i32 @SDiv32(i32 signext %a, i32 signext %b) nounwind {
 ; R5900O1:       # %bb.0:
 ; R5900O1-NEXT:    div $zero, $4, $5
 ; R5900O1-NEXT:    teq $5, $zero, 7
-; R5900O1-NEXT:    jr $ra
 ; R5900O1-NEXT:    mflo $2
+; R5900O1-NEXT:    jr $ra
+; R5900O1-NEXT:    nop
 ;
 ; R5900O2-LABEL: SDiv32:
 ; R5900O2:       # %bb.0:
 ; R5900O2-NEXT:    div $zero, $4, $5
 ; R5900O2-NEXT:    teq $5, $zero, 7
-; R5900O2-NEXT:    jr $ra
 ; R5900O2-NEXT:    mflo $2
+; R5900O2-NEXT:    jr $ra
+; R5900O2-NEXT:    nop
   %1 = sdiv i32 %a, %b
   ret i32 %1
 }
@@ -488,15 +492,17 @@ define i32 @URem32(i32 signext %a, i32 signext %b) nounwind {
 ; R5900O1:       # %bb.0:
 ; R5900O1-NEXT:    divu $zero, $4, $5
 ; R5900O1-NEXT:    teq $5, $zero, 7
-; R5900O1-NEXT:    jr $ra
 ; R5900O1-NEXT:    mfhi $2
+; R5900O1-NEXT:    jr $ra
+; R5900O1-NEXT:    nop
 ;
 ; R5900O2-LABEL: URem32:
 ; R5900O2:       # %bb.0:
 ; R5900O2-NEXT:    divu $zero, $4, $5
 ; R5900O2-NEXT:    teq $5, $zero, 7
-; R5900O2-NEXT:    jr $ra
 ; R5900O2-NEXT:    mfhi $2
+; R5900O2-NEXT:    jr $ra
+; R5900O2-NEXT:    nop
   %1 = urem i32 %a, %b
   ret i32 %1
 }
@@ -551,15 +557,17 @@ define i32 @SRem32(i32 signext %a, i32 signext %b) nounwind {
 ; R5900O1:       # %bb.0:
 ; R5900O1-NEXT:    div $zero, $4, $5
 ; R5900O1-NEXT:    teq $5, $zero, 7
-; R5900O1-NEXT:    jr $ra
 ; R5900O1-NEXT:    mfhi $2
+; R5900O1-NEXT:    jr $ra
+; R5900O1-NEXT:    nop
 ;
 ; R5900O2-LABEL: SRem32:
 ; R5900O2:       # %bb.0:
 ; R5900O2-NEXT:    div $zero, $4, $5
 ; R5900O2-NEXT:    teq $5, $zero, 7
-; R5900O2-NEXT:    jr $ra
 ; R5900O2-NEXT:    mfhi $2
+; R5900O2-NEXT:    jr $ra
+; R5900O2-NEXT:    nop
   %1 = srem i32 %a, %b
   ret i32 %1
 }
