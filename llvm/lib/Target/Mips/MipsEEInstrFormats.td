@@ -177,3 +177,17 @@ class MMI_MFLOHI_FM<bits<5> funct1, bits<6> funct2> : StdArch {
   let Inst{10-6}  = funct1;
   let Inst{5-0}   = funct2;
 }
+
+class EE_ADDAS_FM<bits<6> funct, bits<5> fmt> : StdArch {
+  bits<5> ft;
+  bits<5> fs;
+
+  bits<32> Inst;
+
+  let Inst{31 -26} = 0x11;
+  let Inst{25 -21} = fmt;
+  let Inst{20 -16} = ft;
+  let Inst{15 -11} = fs;
+  let Inst{10 -6} = 0;
+  let Inst{5 -0} = funct;
+}

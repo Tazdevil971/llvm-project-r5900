@@ -10,6 +10,55 @@
 //
 //===----------------------------------------------------------------------===//
 
+def SDT_MipsEeMult : SDTypeProfile<2, 2,
+                                   [SDTCisVT<0, i32>, SDTCisVT<1, untyped>,
+                                    SDTCisSameAs<0, 2>, SDTCisSameAs<0, 3>]>;
+def SDT_MipsEeMulta
+    : SDTypeProfile<
+          1, 2, [SDTCisVT<0, untyped>, SDTCisVT<1, i32>, SDTCisSameAs<1, 2>]>;
+def SDT_MipsEeMAdd
+    : SDTypeProfile<2, 3,
+                    [SDTCisVT<0, i32>, SDTCisVT<1, untyped>, SDTCisSameAs<0, 2>,
+                     SDTCisSameAs<0, 3>, SDTCisSameAs<1, 4>]>;
+def SDT_MipsEeMAdda : SDTypeProfile<1, 3,
+                                    [SDTCisVT<0, untyped>, SDTCisVT<1, i32>,
+                                     SDTCisSameAs<1, 2>, SDTCisSameAs<0, 3>]>;
+
+def SDT_MipsEeRSqrts
+    : SDTypeProfile<
+          1, 2, [SDTCisVT<0, f32>, SDTCisSameAs<0, 1>, SDTCisSameAs<0, 2>]>;
+
+def SDT_MipsEeAddas
+    : SDTypeProfile<
+          1, 2, [SDTCisVT<0, untyped>, SDTCisVT<1, f32>, SDTCisSameAs<1, 2>]>;
+def SDT_MipsEeMAdds : SDTypeProfile<1, 3,
+                                    [SDTCisVT<0, f32>, SDTCisSameAs<0, 1>,
+                                     SDTCisSameAs<0, 2>, SDTCisVT<3, untyped>]>;
+def SDT_MipsEeMAddas : SDTypeProfile<1, 3,
+                                     [SDTCisVT<0, untyped>, SDTCisVT<1, f32>,
+                                      SDTCisSameAs<1, 2>, SDTCisSameAs<0, 3>]>;
+
+def MipsEeMult : SDNode<"MipsISD::EE_MULT", SDT_MipsEeMult>;
+def MipsEeMultu : SDNode<"MipsISD::EE_MULTU", SDT_MipsEeMult>;
+def MipsEeMulta : SDNode<"MipsISD::EE_MULTA", SDT_MipsEeMulta>;
+def MipsEeMultua : SDNode<"MipsISD::EE_MULTUA", SDT_MipsEeMulta>;
+def MipsEeMAdd : SDNode<"MipsISD::EE_MADD", SDT_MipsEeMAdd>;
+def MipsEeMAddu : SDNode<"MipsISD::EE_MADDU", SDT_MipsEeMAdd>;
+def MipsEeMAdda : SDNode<"MipsISD::EE_MADDA", SDT_MipsEeMAdda>;
+def MipsEeMAddua : SDNode<"MipsISD::EE_MADDUA", SDT_MipsEeMAdda>;
+
+def MipsEeRSqrts : SDNode<"MipsISD::EE_RSQRTS", SDT_MipsEeRSqrts>;
+
+def MipsEeAddas : SDNode<"MipsISD::EE_ADDAS", SDT_MipsEeAddas>;
+def MipsEeSubas : SDNode<"MipsISD::EE_SUBAS", SDT_MipsEeAddas>;
+def MipsEeMulas : SDNode<"MipsISD::EE_MULAS", SDT_MipsEeAddas>;
+
+def MipsEeMAdds : SDNode<"MipsISD::EE_MADDS", SDT_MipsEeMAdds>;
+def MipsEeMSubs : SDNode<"MipsISD::EE_MSUBS", SDT_MipsEeMAdds>;
+
+def MipsEeMAddas : SDNode<"MipsISD::EE_MADDAS", SDT_MipsEeMAddas>;
+def MipsEeMSubas : SDNode<"MipsISD::EE_MSUBAS", SDT_MipsEeMAddas>;
+
 //===----------------------------------------------------------------------===//
 // Base EE Core instructions
 //===----------------------------------------------------------------------===//
@@ -18,11 +67,11 @@
 class EeEi<string opstr, InstrItinClass itin> :
     InstSE<(outs), (ins), opstr, [], itin, FrmOther, opstr>;
 
-class EeMult<string opstr, InstrItinClass itin, list<Register> Regs> :
-    InstSE<(outs GPR32Opnd:$rd), (ins GPR32Opnd:$rs, GPR32Opnd:$rt), 
-           !strconcat(opstr, "\t$rd, $rs, $rt"), [], itin, FrmR, opstr> {
-  let Defs = Regs;
+class EeMult<string opstr, InstrItinClass itin, list<Register> Regs>
+    : InstSE<(outs GPR32Opnd:$rd), (ins GPR32Opnd:$rs, GPR32Opnd:$rt),
+             !strconcat(opstr, "\t$rd, $rs, $rt"), [], itin, FrmR, opstr> {
   let isCommutable = 1;
+  let Defs = Regs;
 }
 
 class EeMAdd<string opstr, InstrItinClass itin, list<Register> Regs> :
@@ -33,24 +82,36 @@ class EeMAdd<string opstr, InstrItinClass itin, list<Register> Regs> :
   let Uses = Regs;
 }
 
-class EeMultPseudo<Instruction RealInst, SDPatternOperator OpNode, 
-                   InstrItinClass Itin> :
-    PseudoSE<(outs ACC64:$ac), (ins GPR32Opnd:$rs, GPR32Opnd:$rt),
-             [(set ACC64:$ac, (OpNode GPR32Opnd:$rs, GPR32Opnd:$rt))], Itin>,
-    PseudoInstExpansion<(RealInst ZERO, GPR32Opnd:$rs, GPR32Opnd:$rt)> {
-  let hasNoSchedulingInfo = 1;
-  let isCommutable = 1;
+class EeMultPseudo<Instruction RealInst, InstrItinClass itin, SDNode Op>
+    : PseudoSE<
+          (outs GPR32Opnd:$rd, ACC64:$ac), (ins GPR32Opnd:$rs, GPR32Opnd:$rt),
+          [(set GPR32Opnd:$rd, ACC64:$ac, (Op GPR32Opnd:$rs, GPR32Opnd:$rt))],
+          itin>,
+      PseudoInstExpansion<(RealInst GPR32Opnd:$rd, GPR32Opnd:$rs,
+          GPR32Opnd:$rt)>;
+
+class EeMultaPseudo<Instruction RealInst, InstrItinClass itin, SDNode Op>
+    : PseudoSE<(outs ACC64:$ac), (ins GPR32Opnd:$rs, GPR32Opnd:$rt),
+               [(set ACC64:$ac, (Op GPR32Opnd:$rs, GPR32Opnd:$rt))], itin>,
+      PseudoInstExpansion<(RealInst ZERO, GPR32Opnd:$rs, GPR32Opnd:$rt)>;
+
+class EeMAddPseudo<Instruction RealInst, InstrItinClass itin, SDNode Op>
+    : PseudoSE<(outs GPR32Opnd:$rd, ACC64:$ac),
+               (ins GPR32Opnd:$rs, GPR32Opnd:$rt, ACC64:$acin),
+               [(set GPR32Opnd:$rd, ACC64:$ac,
+                   (Op GPR32Opnd:$rs, GPR32Opnd:$rt, ACC64:$acin))],
+               itin>,
+      PseudoInstExpansion<(RealInst GPR32Opnd:$rd, GPR32Opnd:$rs,
+          GPR32Opnd:$rt)> {
+  string Constraints = "$acin = $ac";
 }
 
-class EeMAddPseudo<Instruction RealInst, SDPatternOperator OpNode,
-                   InstrItinClass itin> : 
-    PseudoSE<(outs ACC64:$ac),
-             (ins GPR32Opnd:$rs, GPR32Opnd:$rt, ACC64:$acin),
-             [(set ACC64:$ac,
-              (OpNode GPR32Opnd:$rs, GPR32Opnd:$rt, ACC64:$acin))],
-             itin>,
-    PseudoInstExpansion<(RealInst ZERO, GPR32Opnd:$rs, GPR32Opnd:$rt)> {
-  let hasNoSchedulingInfo = 1;
+class EeMAddaPseudo<Instruction RealInst, InstrItinClass itin, SDNode Op>
+    : PseudoSE<
+          (outs ACC64:$ac), (ins GPR32Opnd:$rs, GPR32Opnd:$rt, ACC64:$acin),
+          [(set ACC64:$ac, (Op GPR32Opnd:$rs, GPR32Opnd:$rt, ACC64:$acin))],
+          itin>,
+      PseudoInstExpansion<(RealInst ZERO, GPR32Opnd:$rs, GPR32Opnd:$rt)> {
   string Constraints = "$acin = $ac";
 }
 
@@ -120,11 +181,19 @@ let DecoderNamespace = "EE" in {
   def EE_MADDU : EeMAdd<"maddu", II_MADDU, [HI0, LO0]>, EE_MULT_FM<0x1c, 1>, ASE_R5900;
 }
 
-def EE_PseudoMULT : EeMultPseudo<EE_MULT, MipsMult, II_MULT>, ASE_R5900;
-def EE_PseudoMULTU : EeMultPseudo<EE_MULTU, MipsMultu, II_MULTU>, ASE_R5900;
+def : MipsPat<(mul GPR32:$rs, GPR32:$rt), (EE_MULT GPR32:$rs, GPR32:$rt)>,
+      ASE_R5900;
 
-def EE_PseudoMADD : EeMAddPseudo<EE_MADD, MipsMAdd, II_MADD>, ASE_R5900;
-def EE_PseudoMADDU : EeMAddPseudo<EE_MADDU, MipsMAddu, II_MADDU>, ASE_R5900;
+def EE_MULT_PSEUDO : EeMultPseudo<EE_MULT, II_MULT, MipsEeMult>, ASE_R5900;
+def EE_MULTU_PSEUDO : EeMultPseudo<EE_MULTU, II_MULTU, MipsEeMultu>, ASE_R5900;
+def EE_MULTA_PSEUDO : EeMultaPseudo<EE_MULT, II_MULT, MipsEeMulta>, ASE_R5900;
+def EE_MULTUA_PSEUDO : EeMultaPseudo<EE_MULTU, II_MULTU, MipsEeMultua>,
+                       ASE_R5900;
+def EE_MADD_PSEUDO : EeMAddPseudo<EE_MADD, II_MADD, MipsEeMAdd>, ASE_R5900;
+def EE_MADDU_PSEUDO : EeMAddPseudo<EE_MADDU, II_MADDU, MipsEeMAddu>, ASE_R5900;
+def EE_MADDA_PSEUDO : EeMAddaPseudo<EE_MADD, II_MADD, MipsEeMAdda>, ASE_R5900;
+def EE_MADDUA_PSEUDO : EeMAddaPseudo<EE_MADDU, II_MADDU, MipsEeMAddua>,
+                       ASE_R5900;
 
 def : MipsInstAlias<"mult $rs, $rt",
                     (EE_MULT ZERO, GPR32Opnd:$rs, GPR32Opnd:$rt), 1>, ASE_R5900;
@@ -134,10 +203,6 @@ def : MipsInstAlias<"madd $rs, $rt",
                     (EE_MADD ZERO, GPR32Opnd:$rs, GPR32Opnd:$rt), 1>, ASE_R5900;
 def : MipsInstAlias<"maddu $rs, $rt",
                     (EE_MADDU ZERO, GPR32Opnd:$rs, GPR32Opnd:$rt), 1>, ASE_R5900;
-
-// TODO: Is this actually superior to mult/mflo?
-def : MipsPat<(mul GPR32:$lhs, GPR32:$rhs),
-              (EE_MULT GPR32:$lhs, GPR32:$rhs)>, ASE_R5900;
 
 // Second set of multiply hardware
 let DecoderNamespace = "EE" in {
@@ -359,3 +424,106 @@ let DecoderNamespace = "EE" in {
   def MMI_PSRLW     : MmiParShift<"psrlw", NoItinerary>, MMI_PAR_SHIFT_FM<0x3e>, ASE_R5900;
   def MMI_PSRAW     : MmiParShift<"psraw", NoItinerary>, MMI_PAR_SHIFT_FM<0x3f>, ASE_R5900;
 }
+
+//===----------------------------------------------------------------------===//
+// COP1 Extra instructions
+//===----------------------------------------------------------------------===//
+
+class EeAddas<string opstr, InstrItinClass itin>
+    : InstSE<(outs), (ins FGR32Opnd:$ft, FGR32Opnd:$fs),
+             !strconcat(opstr, "\t$ft, $fs"), [], itin, FrmR, opstr>,
+      HARDFLOAT {
+  let hasSideEffects = 0;
+  let Defs = [EE_FAC];
+}
+
+class EeMAdds<string opstr, InstrItinClass itin>
+    : InstSE<(outs FGR32Opnd:$fd), (ins FGR32Opnd:$ft, FGR32Opnd:$fs),
+             !strconcat(opstr, "\t$fd, $ft, $fs"), [], itin, FrmR, opstr>,
+      HARDFLOAT {
+  let hasSideEffects = 0;
+  let Uses = [EE_FAC];
+}
+
+class EeMAddas<string opstr, InstrItinClass itin>
+    : InstSE<(outs), (ins FGR32Opnd:$ft, FGR32Opnd:$fs),
+             !strconcat(opstr, "\t$ft, $fs"), [], itin, FrmR, opstr>,
+      HARDFLOAT {
+  let hasSideEffects = 0;
+  let Uses = [EE_FAC];
+  let Defs = [EE_FAC];
+}
+
+class EeAddasPseudo<Instruction RealInst, InstrItinClass itin, SDNode Op>
+    : PseudoSE<(outs EE_FACC:$ac), (ins FGR32Opnd:$ft, FGR32Opnd:$fs),
+               [(set EE_FACC:$ac, (Op FGR32Opnd:$ft, FGR32Opnd:$fs))], itin>,
+      PseudoInstExpansion<(RealInst FGR32Opnd:$ft, FGR32Opnd:$fs)>;
+
+class EeMAddsPseudo<Instruction RealInst, InstrItinClass itin, SDNode Op>
+    : PseudoSE<(outs FGR32Opnd:$fd),
+               (ins FGR32Opnd:$ft, FGR32Opnd:$fs, EE_FACC:$acin),
+               [(set FGR32Opnd:$fd, (Op FGR32Opnd:$ft, FGR32Opnd:$fs,
+                                        EE_FACC:$acin))],
+               itin>,
+      PseudoInstExpansion<(RealInst FGR32Opnd:$fd, FGR32Opnd:$ft,
+          FGR32Opnd:$fs)>;
+
+class EeMAddasPseudo<Instruction RealInst, InstrItinClass itin, SDNode Op>
+    : PseudoSE<
+          (outs EE_FACC:$ac), (ins FGR32Opnd:$ft, FGR32Opnd:$fs, EE_FACC:$acin),
+          [(set EE_FACC:$ac, (Op FGR32Opnd:$ft, FGR32Opnd:$fs, EE_FACC:$acin))],
+          itin>,
+      PseudoInstExpansion<(RealInst FGR32Opnd:$ft, FGR32Opnd:$fs)> {
+  string Constraints = "$acin = $ac";
+}
+
+let DecoderNamespace = "EE" in {
+  def EE_MAXS : ADDS_FT<"max.s", FGR32Opnd, NoItinerary, 1, fmaxnum>,
+                ADDS_FM<0x28, 0x10>,
+                ASE_R5900;
+  def EE_MINS : ADDS_FT<"min.s", FGR32Opnd, NoItinerary, 1, fminnum>,
+                ADDS_FM<0x29, 0x10>,
+                ASE_R5900;
+  def EE_RSQRTS : ADDS_FT<"rsqrt.s", FGR32Opnd, NoItinerary, 0, MipsEeRSqrts>,
+                  ADDS_FM<0x16, 0x10>,
+                  NeverHasSideEffects,
+                  ASE_R5900;
+
+  def EE_SUBAS : EeAddas<"suba.s", NoItinerary>,
+                 EE_ADDAS_FM<0x19, 0x10>,
+                 ASE_R5900;
+  def EE_MSUBS : EeMAdds<"msub.s", NoItinerary>, ADDS_FM<0x1d, 0x10>, ASE_R5900;
+  def EE_MSUBAS : EeMAddas<"msuba.s", NoItinerary>,
+                  EE_ADDAS_FM<0x1f, 0x10>,
+                  ASE_R5900;
+
+  let isCommutable = 1 in {
+    def EE_ADDAS : EeAddas<"adda.s", NoItinerary>,
+                   EE_ADDAS_FM<0x18, 0x10>,
+                   ASE_R5900;
+    def EE_MULAS : EeAddas<"mula.s", NoItinerary>,
+                   EE_ADDAS_FM<0x1a, 0x10>,
+                   ASE_R5900;
+    def EE_MADDS : EeMAdds<"madd.s", NoItinerary>,
+                   ADDS_FM<0x1c, 0x10>,
+                   ASE_R5900;
+    def EE_MADDAS : EeMAddas<"madda.s", NoItinerary>,
+                    EE_ADDAS_FM<0x1e, 0x10>,
+                    ASE_R5900;
+  }
+}
+
+def EE_ADDAS_PSEUDO : EeAddasPseudo<EE_ADDAS, NoItinerary, MipsEeAddas>,
+                      ASE_R5900;
+def EE_SUBAS_PSEUDO : EeAddasPseudo<EE_SUBAS, NoItinerary, MipsEeSubas>,
+                      ASE_R5900;
+def EE_MULAS_PSEUDO : EeAddasPseudo<EE_MULAS, NoItinerary, MipsEeMulas>,
+                      ASE_R5900;
+def EE_MADDS_PSEUDO : EeMAddsPseudo<EE_MADDS, NoItinerary, MipsEeMAdds>,
+                      ASE_R5900;
+def EE_MSUBS_PSEUDO : EeMAddsPseudo<EE_MSUBS, NoItinerary, MipsEeMSubs>,
+                      ASE_R5900;
+def EE_MADDAS_PSEUDO : EeMAddasPseudo<EE_MADDAS, NoItinerary, MipsEeMAddas>,
+                       ASE_R5900;
+def EE_MSUBAS_PSEUDO : EeMAddasPseudo<EE_MSUBAS, NoItinerary, MipsEeMSubas>,
+                       ASE_R5900;

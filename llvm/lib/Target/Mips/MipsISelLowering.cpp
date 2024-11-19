@@ -290,6 +290,38 @@ const char *MipsTargetLowering::getTargetNodeName(unsigned Opcode) const {
   case MipsISD::PCKEV:             return "MipsISD::PCKEV";
   case MipsISD::PCKOD:             return "MipsISD::PCKOD";
   case MipsISD::INSVE:             return "MipsISD::INSVE";
+  case MipsISD::EE_RSQRTS:
+    return "MipsISD::EE_RSQRTS";
+  case MipsISD::EE_ADDAS:
+    return "MipsISD::EE_ADDAS";
+  case MipsISD::EE_SUBAS:
+    return "MipsISD::EE_SUBAS";
+  case MipsISD::EE_MULAS:
+    return "MipsISD::EE_MULAS";
+  case MipsISD::EE_MADDAS:
+    return "MipsISD::EE_MADDAS";
+  case MipsISD::EE_MSUBAS:
+    return "MipsISD::EE_MSUBAS";
+  case MipsISD::EE_MADDS:
+    return "MipsISD::EE_MADDS";
+  case MipsISD::EE_MSUBS:
+    return "MipsISD::EE_MSUBS";
+  case MipsISD::EE_MULT:
+    return "MipsISD::EE_MULT";
+  case MipsISD::EE_MULTU:
+    return "MipsISD::EE_MULTU";
+  case MipsISD::EE_MULTA:
+    return "MipsISD::EE_MULTA";
+  case MipsISD::EE_MULTUA:
+    return "MipsISD::EE_MULTUA";
+  case MipsISD::EE_MADD:
+    return "MipsISD::EE_MADD";
+  case MipsISD::EE_MADDU:
+    return "MipsISD::EE_MADDU";
+  case MipsISD::EE_MADDA:
+    return "MipsISD::EE_MADDA";
+  case MipsISD::EE_MADDUA:
+    return "MipsISD::EE_MADDUA";
   }
   return nullptr;
 }
@@ -491,24 +523,6 @@ MipsTargetLowering::MipsTargetLowering(const MipsTargetMachine &TM,
     setOperationAction(ISD::ATOMIC_STORE,    MVT::i64,   Expand);
   }
 
-  // The R5900 doesn't support ll/sc, use libcalls for them
-  if (Subtarget.isR5900()) {
-    for (MVT VT : MVT::integer_valuetypes()) {
-      setOperationAction(ISD::ATOMIC_CMP_SWAP, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_SWAP, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_LOAD_ADD, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_LOAD_SUB, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_LOAD_AND, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_LOAD_OR, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_LOAD_XOR, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_LOAD_NAND, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_LOAD_MIN, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_LOAD_MAX, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_LOAD_UMIN, VT, LibCall);
-      setOperationAction(ISD::ATOMIC_LOAD_UMAX, VT, LibCall);
-    }
-  }
-
   if (!Subtarget.hasMips32r2()) {
     setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i8,  Expand);
     setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i16, Expand);
@@ -568,6 +582,9 @@ MipsTargetLowering::MipsTargetLowering(const MipsTargetMachine &TM,
 const MipsTargetLowering *
 MipsTargetLowering::create(const MipsTargetMachine &TM,
                            const MipsSubtarget &STI) {
+  if (STI.isR5900())
+    return createMipsR5900TargetLowering(TM, STI);
+
   if (STI.inMips16Mode())
     return createMips16TargetLowering(TM, STI);
 
@@ -1196,11 +1213,8 @@ static SDValue performADDCombine(SDNode *N, SelectionDAG &DAG,
                                  const MipsSubtarget &Subtarget) {
   // (add v0 (mul v1, v2)) => (madd v1, v2, v0)
   if (DCI.isBeforeLegalizeOps()) {
-    bool HasMadd = (Subtarget.hasMips32() && !Subtarget.hasMips32r6() &&
-                    !Subtarget.inMips16Mode()) ||
-                   Subtarget.isR5900();
-
-    if (HasMadd && N->getValueType(0) == MVT::i64)
+    if (Subtarget.hasMips32() && !Subtarget.hasMips32r6() &&
+        !Subtarget.inMips16Mode() && N->getValueType(0) == MVT::i64)
       return performMADD_MSUBCombine(N, DAG, Subtarget);
 
     return SDValue();

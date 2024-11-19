@@ -52,213 +52,234 @@ class TargetRegisterClass;
 
   namespace MipsISD {
 
-    enum NodeType : unsigned {
-      // Start the numbering from where ISD NodeType finishes.
-      FIRST_NUMBER = ISD::BUILTIN_OP_END,
+  enum NodeType : unsigned {
+    // Start the numbering from where ISD NodeType finishes.
+    FIRST_NUMBER = ISD::BUILTIN_OP_END,
 
-      // Jump and link (call)
-      JmpLink,
+    // Jump and link (call)
+    JmpLink,
 
-      // Tail call
-      TailCall,
+    // Tail call
+    TailCall,
 
-      // Get the Highest (63-48) 16 bits from a 64-bit immediate
-      Highest,
+    // Get the Highest (63-48) 16 bits from a 64-bit immediate
+    Highest,
 
-      // Get the Higher (47-32) 16 bits from a 64-bit immediate
-      Higher,
+    // Get the Higher (47-32) 16 bits from a 64-bit immediate
+    Higher,
 
-      // Get the High 16 bits from a 32/64-bit immediate
-      // No relation with Mips Hi register
-      Hi,
+    // Get the High 16 bits from a 32/64-bit immediate
+    // No relation with Mips Hi register
+    Hi,
 
-      // Get the Lower 16 bits from a 32/64-bit immediate
-      // No relation with Mips Lo register
-      Lo,
+    // Get the Lower 16 bits from a 32/64-bit immediate
+    // No relation with Mips Lo register
+    Lo,
 
-      // Get the High 16 bits from a 32 bit immediate for accessing the GOT.
-      GotHi,
+    // Get the High 16 bits from a 32 bit immediate for accessing the GOT.
+    GotHi,
 
-      // Get the High 16 bits from a 32-bit immediate for accessing TLS.
-      TlsHi,
+    // Get the High 16 bits from a 32-bit immediate for accessing TLS.
+    TlsHi,
 
-      // Handle gp_rel (small data/bss sections) relocation.
-      GPRel,
+    // Handle gp_rel (small data/bss sections) relocation.
+    GPRel,
 
-      // Thread Pointer
-      ThreadPointer,
+    // Thread Pointer
+    ThreadPointer,
 
-      // Vector Floating Point Multiply and Subtract
-      FMS,
+    // Vector Floating Point Multiply and Subtract
+    FMS,
 
-      // Floating Point Branch Conditional
-      FPBrcond,
+    // Floating Point Branch Conditional
+    FPBrcond,
 
-      // Floating Point Compare
-      FPCmp,
+    // Floating Point Compare
+    FPCmp,
 
-      // Floating point Abs
-      FAbs,
+    // Floating point Abs
+    FAbs,
 
-      // Floating point select
-      FSELECT,
+    // Floating point select
+    FSELECT,
 
-      // Node used to generate an MTC1 i32 to f64 instruction
-      MTC1_D64,
+    // Node used to generate an MTC1 i32 to f64 instruction
+    MTC1_D64,
 
-      // Floating Point Conditional Moves
-      CMovFP_T,
-      CMovFP_F,
+    // Floating Point Conditional Moves
+    CMovFP_T,
+    CMovFP_F,
 
-      // FP-to-int truncation node.
-      TruncIntFP,
+    // FP-to-int truncation node.
+    TruncIntFP,
 
-      // Return
-      Ret,
+    // Return
+    Ret,
 
-      // Interrupt, exception, error trap Return
-      ERet,
+    // Interrupt, exception, error trap Return
+    ERet,
 
-      // Software Exception Return.
-      EH_RETURN,
+    // Software Exception Return.
+    EH_RETURN,
 
-      // Node used to extract integer from accumulator.
-      MFHI,
-      MFLO,
+    // Node used to extract integer from accumulator.
+    MFHI,
+    MFLO,
 
-      // Node used to insert integers to accumulator.
-      MTLOHI,
+    // Node used to insert integers to accumulator.
+    MTLOHI,
 
-      // Mult nodes.
-      Mult,
-      Multu,
+    // Mult nodes.
+    Mult,
+    Multu,
 
-      // MAdd/Sub nodes
-      MAdd,
-      MAddu,
-      MSub,
-      MSubu,
+    // MAdd/Sub nodes
+    MAdd,
+    MAddu,
+    MSub,
+    MSubu,
 
-      // DivRem(u)
-      DivRem,
-      DivRemU,
-      DivRem16,
-      DivRemU16,
+    // DivRem(u)
+    DivRem,
+    DivRemU,
+    DivRem16,
+    DivRemU16,
 
-      BuildPairF64,
-      ExtractElementF64,
+    BuildPairF64,
+    ExtractElementF64,
 
-      Wrapper,
+    Wrapper,
 
-      DynAlloc,
+    DynAlloc,
 
-      Sync,
+    Sync,
 
-      Ext,
-      Ins,
-      CIns,
+    Ext,
+    Ins,
+    CIns,
 
-      // EXTR.W intrinsic nodes.
-      EXTP,
-      EXTPDP,
-      EXTR_S_H,
-      EXTR_W,
-      EXTR_R_W,
-      EXTR_RS_W,
-      SHILO,
-      MTHLIP,
+    // EXTR.W intrinsic nodes.
+    EXTP,
+    EXTPDP,
+    EXTR_S_H,
+    EXTR_W,
+    EXTR_R_W,
+    EXTR_RS_W,
+    SHILO,
+    MTHLIP,
 
-      // DPA.W intrinsic nodes.
-      MULSAQ_S_W_PH,
-      MAQ_S_W_PHL,
-      MAQ_S_W_PHR,
-      MAQ_SA_W_PHL,
-      MAQ_SA_W_PHR,
-      DPAU_H_QBL,
-      DPAU_H_QBR,
-      DPSU_H_QBL,
-      DPSU_H_QBR,
-      DPAQ_S_W_PH,
-      DPSQ_S_W_PH,
-      DPAQ_SA_L_W,
-      DPSQ_SA_L_W,
-      DPA_W_PH,
-      DPS_W_PH,
-      DPAQX_S_W_PH,
-      DPAQX_SA_W_PH,
-      DPAX_W_PH,
-      DPSX_W_PH,
-      DPSQX_S_W_PH,
-      DPSQX_SA_W_PH,
-      MULSA_W_PH,
+    // DPA.W intrinsic nodes.
+    MULSAQ_S_W_PH,
+    MAQ_S_W_PHL,
+    MAQ_S_W_PHR,
+    MAQ_SA_W_PHL,
+    MAQ_SA_W_PHR,
+    DPAU_H_QBL,
+    DPAU_H_QBR,
+    DPSU_H_QBL,
+    DPSU_H_QBR,
+    DPAQ_S_W_PH,
+    DPSQ_S_W_PH,
+    DPAQ_SA_L_W,
+    DPSQ_SA_L_W,
+    DPA_W_PH,
+    DPS_W_PH,
+    DPAQX_S_W_PH,
+    DPAQX_SA_W_PH,
+    DPAX_W_PH,
+    DPSX_W_PH,
+    DPSQX_S_W_PH,
+    DPSQX_SA_W_PH,
+    MULSA_W_PH,
 
-      MULT,
-      MULTU,
-      MADD_DSP,
-      MADDU_DSP,
-      MSUB_DSP,
-      MSUBU_DSP,
+    MULT,
+    MULTU,
+    MADD_DSP,
+    MADDU_DSP,
+    MSUB_DSP,
+    MSUBU_DSP,
 
-      // DSP shift nodes.
-      SHLL_DSP,
-      SHRA_DSP,
-      SHRL_DSP,
+    // DSP shift nodes.
+    SHLL_DSP,
+    SHRA_DSP,
+    SHRL_DSP,
 
-      // DSP setcc and select_cc nodes.
-      SETCC_DSP,
-      SELECT_CC_DSP,
+    // DSP setcc and select_cc nodes.
+    SETCC_DSP,
+    SELECT_CC_DSP,
 
-      // Vector comparisons.
-      // These take a vector and return a boolean.
-      VALL_ZERO,
-      VANY_ZERO,
-      VALL_NONZERO,
-      VANY_NONZERO,
+    // Vector comparisons.
+    // These take a vector and return a boolean.
+    VALL_ZERO,
+    VANY_ZERO,
+    VALL_NONZERO,
+    VANY_NONZERO,
 
-      // These take a vector and return a vector bitmask.
-      VCEQ,
-      VCLE_S,
-      VCLE_U,
-      VCLT_S,
-      VCLT_U,
+    // These take a vector and return a vector bitmask.
+    VCEQ,
+    VCLE_S,
+    VCLE_U,
+    VCLT_S,
+    VCLT_U,
 
-      // Vector Shuffle with mask as an operand
-      VSHF,  // Generic shuffle
-      SHF,   // 4-element set shuffle.
-      ILVEV, // Interleave even elements
-      ILVOD, // Interleave odd elements
-      ILVL,  // Interleave left elements
-      ILVR,  // Interleave right elements
-      PCKEV, // Pack even elements
-      PCKOD, // Pack odd elements
+    // Vector Shuffle with mask as an operand
+    VSHF,  // Generic shuffle
+    SHF,   // 4-element set shuffle.
+    ILVEV, // Interleave even elements
+    ILVOD, // Interleave odd elements
+    ILVL,  // Interleave left elements
+    ILVR,  // Interleave right elements
+    PCKEV, // Pack even elements
+    PCKOD, // Pack odd elements
 
-      // Vector Lane Copy
-      INSVE, // Copy element from one vector to another
+    // Vector Lane Copy
+    INSVE, // Copy element from one vector to another
 
-      // Combined (XOR (OR $a, $b), -1)
-      VNOR,
+    // Combined (XOR (OR $a, $b), -1)
+    VNOR,
 
-      // Extended vector element extraction
-      VEXTRACT_SEXT_ELT,
-      VEXTRACT_ZEXT_ELT,
+    // Extended vector element extraction
+    VEXTRACT_SEXT_ELT,
+    VEXTRACT_ZEXT_ELT,
 
-      // Double select nodes for machines without conditional-move.
-      DOUBLE_SELECT_I,
-      DOUBLE_SELECT_I64,
+    // Double select nodes for machines without conditional-move.
+    DOUBLE_SELECT_I,
+    DOUBLE_SELECT_I64,
 
-      // Load/Store Left/Right nodes.
-      FIRST_MEMORY_OPCODE,
-      LWL = FIRST_MEMORY_OPCODE,
-      LWR,
-      SWL,
-      SWR,
-      LDL,
-      LDR,
-      SDL,
-      SDR,
-      LAST_MEMORY_OPCODE = SDR,
-    };
+    // Emotion Engine intrinsics nodes
+    EE_RSQRTS,
 
+    EE_ADDAS,
+    EE_SUBAS,
+    EE_MULAS,
+
+    EE_MADDAS,
+    EE_MSUBAS,
+
+    EE_MADDS,
+    EE_MSUBS,
+
+    EE_MULT,
+    EE_MULTU,
+    EE_MULTA,
+    EE_MULTUA,
+    EE_MADD,
+    EE_MADDU,
+    EE_MADDA,
+    EE_MADDUA,
+
+    // Load/Store Left/Right nodes.
+    FIRST_MEMORY_OPCODE,
+    LWL = FIRST_MEMORY_OPCODE,
+    LWR,
+    SWL,
+    SWR,
+    LDL,
+    LDR,
+    SDL,
+    SDR,
+    LAST_MEMORY_OPCODE = SDR,
+  };
   } // ene namespace MipsISD
 
   //===--------------------------------------------------------------------===//
@@ -754,12 +775,16 @@ class TargetRegisterClass;
   createMipsSETargetLowering(const MipsTargetMachine &TM,
                              const MipsSubtarget &STI);
 
-namespace Mips {
+  const MipsTargetLowering *
+  createMipsR5900TargetLowering(const MipsTargetMachine &TM,
+                                const MipsSubtarget &STI);
 
-FastISel *createFastISel(FunctionLoweringInfo &funcInfo,
-                         const TargetLibraryInfo *libInfo);
+  namespace Mips {
 
-} // end namespace Mips
+  FastISel *createFastISel(FunctionLoweringInfo &funcInfo,
+                           const TargetLibraryInfo *libInfo);
+
+  } // end namespace Mips
 
 } // end namespace llvm
 

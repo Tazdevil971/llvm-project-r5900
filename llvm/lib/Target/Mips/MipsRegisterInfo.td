@@ -316,7 +316,7 @@ let Namespace = "Mips" in {
   def P1 : MipsReg<1, "p1">;
   def P2 : MipsReg<2, "p2">;
 
-  // R5900 EE Core/MMI registers
+  // R5900 EE Core/MMI/COP1 registers
   def EE_SA : Register<"">;
 
   let SubRegIndices = [sub_32] in {
@@ -328,6 +328,9 @@ let Namespace = "Mips" in {
   def EE_LO_128 : RegisterWithSubRegs<"", [LO0_64, LO1_64]>;
   def EE_HI_128 : RegisterWithSubRegs<"", [HI0_64, HI1_64]>;
   }
+
+  // R5900 FPU Accumulator
+  def EE_FAC : Register<"">;
 }
 
 //===----------------------------------------------------------------------===//
@@ -542,6 +545,10 @@ def ACC64DSP : RegisterClass<"Mips", [untyped], 64, (sequence "AC%u", 0, 3)> {
 }
 
 def DSPCC : RegisterClass<"Mips", [v4i8, v2i16], 32, (add DSPCCond)>;
+
+def EE_FACC : RegisterClass<"Mips", [untyped], 64, (add EE_FAC)> {
+  let Size = 64;
+}
 
 // Coprocessor 0 registers.
 def COP0 : RegisterClass<"Mips", [i32], 32, (sequence "COP0%u", 0, 31)>,

@@ -31,39 +31,29 @@ define i32 @Mul32(i32 signext %a, i32 signext %b) nounwind {
 define i64 @Mul64(i64 signext %a, i64 signext %b) nounwind {
 ; R5900O0-LABEL: Mul64:
 ; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    addiu $sp, $sp, -16
+; R5900O0-NEXT:    move $1, $5
+; R5900O0-NEXT:    sll $3, $1, 0
 ; R5900O0-NEXT:    move $1, $4
-; R5900O0-NEXT:    sll $1, $1, 0
-; R5900O0-NEXT:    dsrl $2, $5, 32
-; R5900O0-NEXT:    # kill: def $v0 killed $v0 killed $v0_64
-; R5900O0-NEXT:    sll $2, $2, 0
-; R5900O0-NEXT:    mult $2, $1, $2
-; R5900O0-NEXT:    move $3, $5
-; R5900O0-NEXT:    sll $3, $3, 0
-; R5900O0-NEXT:    multu $zero, $1, $3
-; R5900O0-NEXT:    mflo $1
-; R5900O0-NEXT:    sw $1, 8($sp) # 8-byte Folded Spill
-; R5900O0-NEXT:    mfhi $1
-; R5900O0-NEXT:    sw $1, 12($sp) # 8-byte Folded Spill
-; R5900O0-NEXT:    mfhi $1
-; R5900O0-NEXT:    addu $1, $1, $2
+; R5900O0-NEXT:    sll $2, $1, 0
+; R5900O0-NEXT:    multu $1, $2, $3
+; R5900O0-NEXT:    dsll $1, $1, 32
+; R5900O0-NEXT:    dsrl $1, $1, 32
+; R5900O0-NEXT:    mfhi $6
+; R5900O0-NEXT:    addiu $7, $zero, 0
+; R5900O0-NEXT:    mtlo $6
+; R5900O0-NEXT:    mthi $7
+; R5900O0-NEXT:    dsrl $5, $5, 32
+; R5900O0-NEXT:    # kill: def $a1 killed $a1 killed $a1_64
+; R5900O0-NEXT:    sll $5, $5, 0
+; R5900O0-NEXT:    madd $2, $5
 ; R5900O0-NEXT:    dsrl $2, $4, 32
 ; R5900O0-NEXT:    # kill: def $v0 killed $v0 killed $v0_64
 ; R5900O0-NEXT:    sll $2, $2, 0
-; R5900O0-NEXT:    mult $2, $2, $3
-; R5900O0-NEXT:    lw $3, 8($sp) # 8-byte Folded Reload
-; R5900O0-NEXT:    mtlo $3
-; R5900O0-NEXT:    lw $3, 12($sp) # 8-byte Folded Reload
-; R5900O0-NEXT:    mthi $3
-; R5900O0-NEXT:    addu $2, $1, $2
-; R5900O0-NEXT:    # implicit-def: $at_64
-; R5900O0-NEXT:    move $1, $2
-; R5900O0-NEXT:    dsll $2, $1, 32
-; R5900O0-NEXT:    mflo $1
-; R5900O0-NEXT:    dsll $1, $1, 32
-; R5900O0-NEXT:    dsrl $1, $1, 32
+; R5900O0-NEXT:    madd $3, $2, $3
+; R5900O0-NEXT:    # implicit-def: $v0_64
+; R5900O0-NEXT:    move $2, $3
+; R5900O0-NEXT:    dsll $2, $2, 32
 ; R5900O0-NEXT:    or $2, $1, $2
-; R5900O0-NEXT:    addiu $sp, $sp, 16
 ; R5900O0-NEXT:    jr $ra
 ; R5900O0-NEXT:    nop
 ;
@@ -71,20 +61,20 @@ define i64 @Mul64(i64 signext %a, i64 signext %b) nounwind {
 ; R5900O1:       # %bb.0:
 ; R5900O1-NEXT:    sll $1, $5, 0
 ; R5900O1-NEXT:    sll $2, $4, 0
-; R5900O1-NEXT:    multu $zero, $2, $1
-; R5900O1-NEXT:    mfhi $3
-; R5900O1-NEXT:    mflo $6
+; R5900O1-NEXT:    multu $3, $2, $1
+; R5900O1-NEXT:    mfhi $6
 ; R5900O1-NEXT:    dsrl $5, $5, 32
 ; R5900O1-NEXT:    sll $5, $5, 0
-; R5900O1-NEXT:    mult $2, $2, $5
-; R5900O1-NEXT:    addu $2, $3, $2
-; R5900O1-NEXT:    dsrl $3, $4, 32
-; R5900O1-NEXT:    sll $3, $3, 0
-; R5900O1-NEXT:    mult $1, $3, $1
-; R5900O1-NEXT:    addu $1, $2, $1
-; R5900O1-NEXT:    dsll $1, $1, 32
-; R5900O1-NEXT:    dsll $2, $6, 32
+; R5900O1-NEXT:    addiu $7, $zero, 0
+; R5900O1-NEXT:    mtlo $6
+; R5900O1-NEXT:    mthi $7
+; R5900O1-NEXT:    madd $2, $5
+; R5900O1-NEXT:    dsrl $2, $4, 32
+; R5900O1-NEXT:    sll $2, $2, 0
+; R5900O1-NEXT:    madd $1, $2, $1
+; R5900O1-NEXT:    dsll $2, $3, 32
 ; R5900O1-NEXT:    dsrl $2, $2, 32
+; R5900O1-NEXT:    dsll $1, $1, 32
 ; R5900O1-NEXT:    jr $ra
 ; R5900O1-NEXT:    or $2, $2, $1
 ;
@@ -92,517 +82,63 @@ define i64 @Mul64(i64 signext %a, i64 signext %b) nounwind {
 ; R5900O2:       # %bb.0:
 ; R5900O2-NEXT:    sll $1, $5, 0
 ; R5900O2-NEXT:    sll $2, $4, 0
-; R5900O2-NEXT:    multu $zero, $2, $1
-; R5900O2-NEXT:    mfhi $3
-; R5900O2-NEXT:    mflo $6
+; R5900O2-NEXT:    multu $3, $2, $1
+; R5900O2-NEXT:    mfhi $6
 ; R5900O2-NEXT:    dsrl $5, $5, 32
 ; R5900O2-NEXT:    sll $5, $5, 0
-; R5900O2-NEXT:    mult $2, $2, $5
-; R5900O2-NEXT:    addu $2, $3, $2
-; R5900O2-NEXT:    dsrl $3, $4, 32
-; R5900O2-NEXT:    sll $3, $3, 0
-; R5900O2-NEXT:    mult $1, $3, $1
-; R5900O2-NEXT:    addu $1, $2, $1
-; R5900O2-NEXT:    dsll $1, $1, 32
-; R5900O2-NEXT:    dsll $2, $6, 32
+; R5900O2-NEXT:    addiu $7, $zero, 0
+; R5900O2-NEXT:    mtlo $6
+; R5900O2-NEXT:    mthi $7
+; R5900O2-NEXT:    madd $2, $5
+; R5900O2-NEXT:    dsrl $2, $4, 32
+; R5900O2-NEXT:    sll $2, $2, 0
+; R5900O2-NEXT:    madd $1, $2, $1
+; R5900O2-NEXT:    dsll $2, $3, 32
 ; R5900O2-NEXT:    dsrl $2, $2, 32
+; R5900O2-NEXT:    dsll $1, $1, 32
 ; R5900O2-NEXT:    jr $ra
 ; R5900O2-NEXT:    or $2, $2, $1
   %1 = mul i64 %a, %b
   ret i64 %1
 }
 
-define i64 @MAdd1(i32 %a, i32 %b, i32 %c) nounwind readnone {
-; R5900O0-LABEL: MAdd1:
+define i64 @Mul64_Widen(i32 signext %a, i32 signext %b) nounwind {
+; R5900O0-LABEL: Mul64_Widen:
 ; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    move $1, $5
-; R5900O0-NEXT:    sll $1, $1, 0
-; R5900O0-NEXT:    move $2, $4
-; R5900O0-NEXT:    sll $2, $2, 0
-; R5900O0-NEXT:    move $3, $6
-; R5900O0-NEXT:    sll $3, $3, 0
-; R5900O0-NEXT:    sll $4, $6, 0
-; R5900O0-NEXT:    dsrl $4, $4, 32
-; R5900O0-NEXT:    # kill: def $a0 killed $a0 killed $a0_64
-; R5900O0-NEXT:    sll $4, $4, 0
-; R5900O0-NEXT:    mtlo $3
-; R5900O0-NEXT:    mthi $4
-; R5900O0-NEXT:    madd $zero, $1, $2
-; R5900O0-NEXT:    mfhi $2
-; R5900O0-NEXT:    # implicit-def: $at_64
-; R5900O0-NEXT:    move $1, $2
-; R5900O0-NEXT:    dsll $2, $1, 32
-; R5900O0-NEXT:    mflo $1
-; R5900O0-NEXT:    dsll $1, $1, 32
-; R5900O0-NEXT:    dsrl $1, $1, 32
-; R5900O0-NEXT:    or $2, $1, $2
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: MAdd1:
-; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    sll $1, $4, 0
-; R5900O1-NEXT:    sll $2, $5, 0
-; R5900O1-NEXT:    sll $3, $6, 0
-; R5900O1-NEXT:    sll $6, $6, 0
-; R5900O1-NEXT:    dsrl $4, $6, 32
-; R5900O1-NEXT:    sll $4, $4, 0
-; R5900O1-NEXT:    mtlo $3
-; R5900O1-NEXT:    mthi $4
-; R5900O1-NEXT:    madd $zero, $2, $1
-; R5900O1-NEXT:    mflo $1
-; R5900O1-NEXT:    mfhi $2
-; R5900O1-NEXT:    dsll $2, $2, 32
-; R5900O1-NEXT:    dsll $1, $1, 32
-; R5900O1-NEXT:    dsrl $1, $1, 32
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    or $2, $1, $2
-;
-; R5900O2-LABEL: MAdd1:
-; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    sll $1, $4, 0
-; R5900O2-NEXT:    sll $2, $5, 0
-; R5900O2-NEXT:    sll $3, $6, 0
-; R5900O2-NEXT:    sll $6, $6, 0
-; R5900O2-NEXT:    dsrl $4, $6, 32
-; R5900O2-NEXT:    sll $4, $4, 0
-; R5900O2-NEXT:    mtlo $3
-; R5900O2-NEXT:    mthi $4
-; R5900O2-NEXT:    madd $zero, $2, $1
-; R5900O2-NEXT:    mflo $1
-; R5900O2-NEXT:    mfhi $2
-; R5900O2-NEXT:    dsll $2, $2, 32
-; R5900O2-NEXT:    dsll $1, $1, 32
-; R5900O2-NEXT:    dsrl $1, $1, 32
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    or $2, $1, $2
-  %conv = sext i32 %a to i64
-  %conv2 = sext i32 %b to i64
-  %mul = mul nsw i64 %conv2, %conv
-  %conv4 = sext i32 %c to i64
-  %add = add nsw i64 %mul, %conv4
-  ret i64 %add
-}
-
-define i64 @MAdd2(i32 zeroext %a, i32 zeroext %b, i32 zeroext %c) nounwind readnone {
-; R5900O0-LABEL: MAdd2:
-; R5900O0:       # %bb.0: # %entry
-; R5900O0-NEXT:    move $1, $6
-; R5900O0-NEXT:    sll $1, $1, 0
-; R5900O0-NEXT:    move $1, $5
-; R5900O0-NEXT:    sll $1, $1, 0
-; R5900O0-NEXT:    move $2, $4
-; R5900O0-NEXT:    sll $2, $2, 0
-; R5900O0-NEXT:    multu $zero, $1, $2
-; R5900O0-NEXT:    mfhi $2
-; R5900O0-NEXT:    # implicit-def: $at_64
-; R5900O0-NEXT:    move $1, $2
-; R5900O0-NEXT:    dsll $2, $1, 32
-; R5900O0-NEXT:    mflo $1
-; R5900O0-NEXT:    dsll $1, $1, 32
-; R5900O0-NEXT:    dsrl $1, $1, 32
-; R5900O0-NEXT:    or $1, $1, $2
-; R5900O0-NEXT:    daddu $2, $1, $6
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: MAdd2:
-; R5900O1:       # %bb.0: # %entry
-; R5900O1-NEXT:    sll $1, $4, 0
-; R5900O1-NEXT:    sll $2, $5, 0
-; R5900O1-NEXT:    multu $zero, $2, $1
-; R5900O1-NEXT:    mflo $1
-; R5900O1-NEXT:    mfhi $2
-; R5900O1-NEXT:    dsll $2, $2, 32
-; R5900O1-NEXT:    dsll $1, $1, 32
-; R5900O1-NEXT:    dsrl $1, $1, 32
-; R5900O1-NEXT:    or $1, $1, $2
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    daddu $2, $1, $6
-;
-; R5900O2-LABEL: MAdd2:
-; R5900O2:       # %bb.0: # %entry
-; R5900O2-NEXT:    sll $1, $4, 0
-; R5900O2-NEXT:    sll $2, $5, 0
-; R5900O2-NEXT:    multu $zero, $2, $1
-; R5900O2-NEXT:    mflo $1
-; R5900O2-NEXT:    mfhi $2
-; R5900O2-NEXT:    dsll $2, $2, 32
-; R5900O2-NEXT:    dsll $1, $1, 32
-; R5900O2-NEXT:    dsrl $1, $1, 32
-; R5900O2-NEXT:    or $1, $1, $2
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    daddu $2, $1, $6
-entry:
-  %conv = zext i32 %a to i64
-  %conv2 = zext i32 %b to i64
-  %mul = mul nsw i64 %conv2, %conv
-  %conv4 = zext i32 %c to i64
-  %add = add nsw i64 %mul, %conv4
-  ret i64 %add
-}
-
-define i64 @MAdd3(i32 %a, i32 %b, i64 %c) nounwind readnone {
-; R5900O0-LABEL: MAdd3:
-; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    move $1, $5
-; R5900O0-NEXT:    sll $1, $1, 0
-; R5900O0-NEXT:    move $2, $4
-; R5900O0-NEXT:    sll $2, $2, 0
-; R5900O0-NEXT:    move $3, $6
-; R5900O0-NEXT:    sll $3, $3, 0
-; R5900O0-NEXT:    dsrl $4, $6, 32
-; R5900O0-NEXT:    # kill: def $a0 killed $a0 killed $a0_64
-; R5900O0-NEXT:    sll $4, $4, 0
-; R5900O0-NEXT:    mtlo $3
-; R5900O0-NEXT:    mthi $4
-; R5900O0-NEXT:    madd $zero, $1, $2
-; R5900O0-NEXT:    mfhi $2
-; R5900O0-NEXT:    # implicit-def: $at_64
-; R5900O0-NEXT:    move $1, $2
-; R5900O0-NEXT:    dsll $2, $1, 32
-; R5900O0-NEXT:    mflo $1
-; R5900O0-NEXT:    dsll $1, $1, 32
-; R5900O0-NEXT:    dsrl $1, $1, 32
-; R5900O0-NEXT:    or $2, $1, $2
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: MAdd3:
-; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    sll $1, $4, 0
-; R5900O1-NEXT:    sll $2, $5, 0
-; R5900O1-NEXT:    sll $3, $6, 0
-; R5900O1-NEXT:    dsrl $4, $6, 32
-; R5900O1-NEXT:    sll $4, $4, 0
-; R5900O1-NEXT:    mtlo $3
-; R5900O1-NEXT:    mthi $4
-; R5900O1-NEXT:    madd $zero, $2, $1
-; R5900O1-NEXT:    mflo $1
-; R5900O1-NEXT:    mfhi $2
-; R5900O1-NEXT:    dsll $2, $2, 32
-; R5900O1-NEXT:    dsll $1, $1, 32
-; R5900O1-NEXT:    dsrl $1, $1, 32
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    or $2, $1, $2
-;
-; R5900O2-LABEL: MAdd3:
-; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    sll $1, $4, 0
-; R5900O2-NEXT:    sll $2, $5, 0
-; R5900O2-NEXT:    sll $3, $6, 0
-; R5900O2-NEXT:    dsrl $4, $6, 32
-; R5900O2-NEXT:    sll $4, $4, 0
-; R5900O2-NEXT:    mtlo $3
-; R5900O2-NEXT:    mthi $4
-; R5900O2-NEXT:    madd $zero, $2, $1
-; R5900O2-NEXT:    mflo $1
-; R5900O2-NEXT:    mfhi $2
-; R5900O2-NEXT:    dsll $2, $2, 32
-; R5900O2-NEXT:    dsll $1, $1, 32
-; R5900O2-NEXT:    dsrl $1, $1, 32
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    or $2, $1, $2
-  %conv = sext i32 %a to i64
-  %conv2 = sext i32 %b to i64
-  %mul = mul nsw i64 %conv2, %conv
-  %add = add nsw i64 %mul, %c
-  ret i64 %add
-}
-
-define i32 @MAdd4(i32 %a, i32 %b, i32 %c) {
-; R5900O0-LABEL: MAdd4:
-; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    move $1, $6
-; R5900O0-NEXT:    sll $1, $1, 0
 ; R5900O0-NEXT:    move $2, $5
-; R5900O0-NEXT:    sll $3, $2, 0
-; R5900O0-NEXT:    move $2, $4
-; R5900O0-NEXT:    sll $2, $2, 0
-; R5900O0-NEXT:    mult $2, $2, $3
-; R5900O0-NEXT:    addu $2, $1, $2
+; R5900O0-NEXT:    move $1, $4
+; R5900O0-NEXT:    mult $1, $1, $2
+; R5900O0-NEXT:    dsll $1, $1, 32
+; R5900O0-NEXT:    dsrl $1, $1, 32
+; R5900O0-NEXT:    mfhi $3
+; R5900O0-NEXT:    # implicit-def: $v0_64
+; R5900O0-NEXT:    move $2, $3
+; R5900O0-NEXT:    dsll $2, $2, 32
+; R5900O0-NEXT:    or $2, $1, $2
 ; R5900O0-NEXT:    jr $ra
 ; R5900O0-NEXT:    nop
 ;
-; R5900O1-LABEL: MAdd4:
+; R5900O1-LABEL: Mul64_Widen:
 ; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    sll $1, $5, 0
-; R5900O1-NEXT:    sll $2, $4, 0
-; R5900O1-NEXT:    mult $1, $2, $1
-; R5900O1-NEXT:    sll $2, $6, 0
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    addu $2, $2, $1
-;
-; R5900O2-LABEL: MAdd4:
-; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    sll $1, $5, 0
-; R5900O2-NEXT:    sll $2, $4, 0
-; R5900O2-NEXT:    mult $1, $2, $1
-; R5900O2-NEXT:    sll $2, $6, 0
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    addu $2, $2, $1
-  %mul = mul nsw i32 %a, %b
-  %add = add nsw i32 %c, %mul
-
-  ret i32 %add
-}
-
-define i32 @UDiv32(i32 signext %a, i32 signext %b) nounwind {
-; R5900O0-LABEL: UDiv32:
-; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    move $1, $5
-; R5900O0-NEXT:    move $2, $4
-; R5900O0-NEXT:    divu $zero, $2, $1
-; R5900O0-NEXT:    teq $1, $zero, 7
-; R5900O0-NEXT:    mflo $2
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: UDiv32:
-; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    divu $zero, $4, $5
-; R5900O1-NEXT:    teq $5, $zero, 7
-; R5900O1-NEXT:    mflo $2
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    nop
-;
-; R5900O2-LABEL: UDiv32:
-; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    divu $zero, $4, $5
-; R5900O2-NEXT:    teq $5, $zero, 7
-; R5900O2-NEXT:    mflo $2
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    nop
-  %1 = udiv i32 %a, %b
-  ret i32 %1
-}
-
-define i64 @UDiv64(i64 signext %a, i64 signext %b) nounwind {
-; R5900O0-LABEL: UDiv64:
-; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    addiu $sp, $sp, -16
-; R5900O0-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O0-NEXT:    jal __udivdi3
-; R5900O0-NEXT:    nop
-; R5900O0-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O0-NEXT:    addiu $sp, $sp, 16
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: UDiv64:
-; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    addiu $sp, $sp, -16
-; R5900O1-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O1-NEXT:    jal __udivdi3
-; R5900O1-NEXT:    nop
-; R5900O1-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    addiu $sp, $sp, 16
-;
-; R5900O2-LABEL: UDiv64:
-; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    addiu $sp, $sp, -16
-; R5900O2-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O2-NEXT:    jal __udivdi3
-; R5900O2-NEXT:    nop
-; R5900O2-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    addiu $sp, $sp, 16
-  %1 = udiv i64 %a, %b
-  ret i64 %1
-}
-
-define i32 @SDiv32(i32 signext %a, i32 signext %b) nounwind {
-; R5900O0-LABEL: SDiv32:
-; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    move $1, $5
-; R5900O0-NEXT:    move $2, $4
-; R5900O0-NEXT:    div $zero, $2, $1
-; R5900O0-NEXT:    teq $1, $zero, 7
-; R5900O0-NEXT:    mflo $2
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: SDiv32:
-; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    div $zero, $4, $5
-; R5900O1-NEXT:    teq $5, $zero, 7
-; R5900O1-NEXT:    mflo $2
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    nop
-;
-; R5900O2-LABEL: SDiv32:
-; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    div $zero, $4, $5
-; R5900O2-NEXT:    teq $5, $zero, 7
-; R5900O2-NEXT:    mflo $2
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    nop
-  %1 = sdiv i32 %a, %b
-  ret i32 %1
-}
-
-define i64 @SDiv64(i64 signext %a, i64 signext %b) nounwind {
-; R5900O0-LABEL: SDiv64:
-; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    addiu $sp, $sp, -16
-; R5900O0-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O0-NEXT:    jal __divdi3
-; R5900O0-NEXT:    nop
-; R5900O0-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O0-NEXT:    addiu $sp, $sp, 16
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: SDiv64:
-; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    addiu $sp, $sp, -16
-; R5900O1-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O1-NEXT:    jal __divdi3
-; R5900O1-NEXT:    nop
-; R5900O1-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    addiu $sp, $sp, 16
-;
-; R5900O2-LABEL: SDiv64:
-; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    addiu $sp, $sp, -16
-; R5900O2-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O2-NEXT:    jal __divdi3
-; R5900O2-NEXT:    nop
-; R5900O2-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    addiu $sp, $sp, 16
-  %1 = sdiv i64 %a, %b
-  ret i64 %1
-}
-
-define i32 @URem32(i32 signext %a, i32 signext %b) nounwind {
-; R5900O0-LABEL: URem32:
-; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    move $1, $5
-; R5900O0-NEXT:    move $2, $4
-; R5900O0-NEXT:    divu $zero, $2, $1
-; R5900O0-NEXT:    teq $1, $zero, 7
-; R5900O0-NEXT:    mfhi $2
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: URem32:
-; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    divu $zero, $4, $5
-; R5900O1-NEXT:    teq $5, $zero, 7
+; R5900O1-NEXT:    mult $1, $4, $5
 ; R5900O1-NEXT:    mfhi $2
+; R5900O1-NEXT:    dsll $1, $1, 32
+; R5900O1-NEXT:    dsrl $1, $1, 32
+; R5900O1-NEXT:    dsll $2, $2, 32
 ; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    nop
+; R5900O1-NEXT:    or $2, $1, $2
 ;
-; R5900O2-LABEL: URem32:
+; R5900O2-LABEL: Mul64_Widen:
 ; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    divu $zero, $4, $5
-; R5900O2-NEXT:    teq $5, $zero, 7
+; R5900O2-NEXT:    mult $1, $4, $5
 ; R5900O2-NEXT:    mfhi $2
+; R5900O2-NEXT:    dsll $1, $1, 32
+; R5900O2-NEXT:    dsrl $1, $1, 32
+; R5900O2-NEXT:    dsll $2, $2, 32
 ; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    nop
-  %1 = urem i32 %a, %b
-  ret i32 %1
-}
-
-define i64 @URem64(i64 signext %a, i64 signext %b) nounwind {
-; R5900O0-LABEL: URem64:
-; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    addiu $sp, $sp, -16
-; R5900O0-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O0-NEXT:    jal __umoddi3
-; R5900O0-NEXT:    nop
-; R5900O0-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O0-NEXT:    addiu $sp, $sp, 16
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: URem64:
-; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    addiu $sp, $sp, -16
-; R5900O1-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O1-NEXT:    jal __umoddi3
-; R5900O1-NEXT:    nop
-; R5900O1-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    addiu $sp, $sp, 16
-;
-; R5900O2-LABEL: URem64:
-; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    addiu $sp, $sp, -16
-; R5900O2-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O2-NEXT:    jal __umoddi3
-; R5900O2-NEXT:    nop
-; R5900O2-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    addiu $sp, $sp, 16
-  %1 = urem i64 %a, %b
-  ret i64 %1
-}
-
-define i32 @SRem32(i32 signext %a, i32 signext %b) nounwind {
-; R5900O0-LABEL: SRem32:
-; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    move $1, $5
-; R5900O0-NEXT:    move $2, $4
-; R5900O0-NEXT:    div $zero, $2, $1
-; R5900O0-NEXT:    teq $1, $zero, 7
-; R5900O0-NEXT:    mfhi $2
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: SRem32:
-; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    div $zero, $4, $5
-; R5900O1-NEXT:    teq $5, $zero, 7
-; R5900O1-NEXT:    mfhi $2
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    nop
-;
-; R5900O2-LABEL: SRem32:
-; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    div $zero, $4, $5
-; R5900O2-NEXT:    teq $5, $zero, 7
-; R5900O2-NEXT:    mfhi $2
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    nop
-  %1 = srem i32 %a, %b
-  ret i32 %1
-}
-
-define i64 @SRem64(i64 signext %a, i64 signext %b) nounwind {
-; R5900O0-LABEL: SRem64:
-; R5900O0:       # %bb.0:
-; R5900O0-NEXT:    addiu $sp, $sp, -16
-; R5900O0-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O0-NEXT:    jal __moddi3
-; R5900O0-NEXT:    nop
-; R5900O0-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O0-NEXT:    addiu $sp, $sp, 16
-; R5900O0-NEXT:    jr $ra
-; R5900O0-NEXT:    nop
-;
-; R5900O1-LABEL: SRem64:
-; R5900O1:       # %bb.0:
-; R5900O1-NEXT:    addiu $sp, $sp, -16
-; R5900O1-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O1-NEXT:    jal __moddi3
-; R5900O1-NEXT:    nop
-; R5900O1-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O1-NEXT:    jr $ra
-; R5900O1-NEXT:    addiu $sp, $sp, 16
-;
-; R5900O2-LABEL: SRem64:
-; R5900O2:       # %bb.0:
-; R5900O2-NEXT:    addiu $sp, $sp, -16
-; R5900O2-NEXT:    sd $ra, 8($sp) # 8-byte Folded Spill
-; R5900O2-NEXT:    jal __moddi3
-; R5900O2-NEXT:    nop
-; R5900O2-NEXT:    ld $ra, 8($sp) # 8-byte Folded Reload
-; R5900O2-NEXT:    jr $ra
-; R5900O2-NEXT:    addiu $sp, $sp, 16
-  %1 = srem i64 %a, %b
+; R5900O2-NEXT:    or $2, $1, $2
+  %conv = sext i32 %a to i64
+  %conv2 = sext i32 %b to i64
+  %1 = mul i64 %conv, %conv2
   ret i64 %1
 }

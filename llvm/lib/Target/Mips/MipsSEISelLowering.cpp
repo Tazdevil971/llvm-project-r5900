@@ -12,6 +12,7 @@
 
 #include "MipsSEISelLowering.h"
 #include "MipsMachineFunction.h"
+#include "MipsR5900ISelLowering.h"
 #include "MipsRegisterInfo.h"
 #include "MipsSubtarget.h"
 #include "llvm/ADT/APInt.h"
@@ -245,24 +246,6 @@ MipsSETargetLowering::MipsSETargetLowering(const MipsTargetMachine &TM,
     setOperationAction(ISD::UDIVREM,          MVT::i64, Custom);
   }
 
-  // The R5900 doesn't have 64bit mul/div hardware
-  if (Subtarget.isR5900()) {
-    setOperationAction(ISD::MUL, MVT::i64, Expand);
-    setOperationAction(ISD::SMUL_LOHI, MVT::i64, Expand);
-    setOperationAction(ISD::UMUL_LOHI, MVT::i64, Expand);
-    setOperationAction(ISD::MULHS, MVT::i64, Expand);
-    setOperationAction(ISD::MULHU, MVT::i64, Expand);
-    setOperationAction(ISD::SDIVREM, MVT::i64, Expand);
-    setOperationAction(ISD::UDIVREM, MVT::i64, Expand);
-  }
-
-  // TODO: For some reason the R5900 requires this? Why?
-  // (Probably required due to the quirky nature of having 32bit mul HW but
-  // 64bit registers)
-  if (Subtarget.isR5900()) {
-    setOperationAction(ISD::BUILD_PAIR, MVT::i64, Expand);
-  }
-
   setOperationAction(ISD::INTRINSIC_WO_CHAIN, MVT::i64, Custom);
   setOperationAction(ISD::INTRINSIC_W_CHAIN,  MVT::i64, Custom);
 
@@ -372,6 +355,12 @@ const MipsTargetLowering *
 llvm::createMipsSETargetLowering(const MipsTargetMachine &TM,
                                  const MipsSubtarget &STI) {
   return new MipsSETargetLowering(TM, STI);
+}
+
+const MipsTargetLowering *
+llvm::createMipsR5900TargetLowering(const MipsTargetMachine &TM,
+                                    const MipsSubtarget &STI) {
+  return new MipsR5900TargetLowering(TM, STI);
 }
 
 const TargetRegisterClass *

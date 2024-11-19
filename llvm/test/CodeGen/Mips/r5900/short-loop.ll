@@ -4,8 +4,8 @@
 ; RUN:   FileCheck %s -check-prefix=R5900
 
 ; Check that MipsDelaySlotFiller doesn't incorrectly fill out the delay slot of short loops
-define i32 @mypow(i32 %base, i32 %n) {
-; MIPS3-LABEL: mypow:
+define i32 @MyMul(i32 %base, i32 %n) {
+; MIPS3-LABEL: MyMul:
 ; MIPS3:       # %bb.0: # %entry
 ; MIPS3-NEXT:    sll $3, $5, 0
 ; MIPS3-NEXT:    sll $4, $4, 0
@@ -19,7 +19,7 @@ define i32 @mypow(i32 %base, i32 %n) {
 ; MIPS3-NEXT:    jr $ra
 ; MIPS3-NEXT:    nop
 ;
-; R5900-LABEL: mypow:
+; R5900-LABEL: MyMul:
 ; R5900:       # %bb.0: # %entry
 ; R5900-NEXT:    sll $3, $5, 0
 ; R5900-NEXT:    sll $4, $4, 0

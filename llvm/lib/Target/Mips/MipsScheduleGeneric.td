@@ -1025,53 +1025,23 @@ def : InstRW<[GenericWriteFPUMoveGPRFPU], (instrs DMFC1, DMTC1)>;
 // =======
 
 def : InstRW<[GenericWriteCOP0], (instrs EE_DI, EE_EI)>;
-def : InstRW<[GenericWriteLoad], (instrs EE_LQ, EE_SQ)>;
+def : InstRW<[GenericWriteLoad], (instrs EE_LQ)>;
+def : InstRW<[GenericWriteStore], (instrs EE_SQ)>;
 
 def : InstRW<[GenericWriteALU], (instrs EE_MOVN_I_I, EE_MOVZ_I_I)>;
 def : InstRW<[GenericWriteALU], (instrs EE_MOVN_I_I64, EE_MOVN_I64_I, 
                                  EE_MOVN_I64_I64, EE_MOVZ_I_I64, 
                                  EE_MOVZ_I64_I, EE_MOVZ_I64_I64)>;
 
-def : InstRW<[GenericWriteMul], (instrs EE_MULT, EE_MULTU, 
-                                 EE_MADD, EE_MADDU)>;
-
-def : InstRW<[GenericWriteMul], (instrs EE_MULT1, EE_MULTU1, 
-                                 EE_MADD1, EE_MADDU1, EE_SDIV1, 
-                                 EE_UDIV1, EE_MTLO1, EE_MTHI1, 
-                                 EE_MFLO1, EE_MFHI1)>;
-
-// TODO: Give these instructions proper scheduling
-def : InstRW<[GenericWriteALU], (instrs MMI_MFSA, MMI_MTSA,
-                                 MMI_MTSAB, MMI_MTSAH, MMI_QFSRV,
-                                 MMI_PADDW, MMI_PSUBW, MMI_PCGTW,
-                                 MMI_PMAXW, MMI_PADDH, MMI_PSUBH,
-                                 MMI_PCGTH, MMI_PMAXH, MMI_PADDB,
-                                 MMI_PSUBB, MMI_PCGTB, MMI_PADDSW,
-                                 MMI_PSUBSW, MMI_PEXTLW, MMI_PPACW,
-                                 MMI_PADDSH, MMI_PSUBSH, MMI_PEXTLH,
-                                 MMI_PPACH, MMI_PADDSB, MMI_PSUBSB,
-                                 MMI_PEXTLB, MMI_PPACB, MMI_PEXT5,
-                                 MMI_PPAC5, MMI_PCEQW, MMI_PMINW,
-                                 MMI_PADSBH, MMI_PABSH, MMI_PCEQH,
-                                 MMI_PMINH, MMI_PCEQB, MMI_PADDUW,
-                                 MMI_PSUBUW, MMI_PEXTUW, MMI_PADDUH,
-                                 MMI_PSUBUH, MMI_PEXTUH, MMI_PADDUB,
-                                 MMI_PSUBUB, MMI_PEXTUB, MMI_PMADDW,
-                                 MMI_PSLLVW, MMI_PSRLVW, MMI_PMSUBW,
-                                 MMI_PMFHI, MMI_PMFLO, MMI_PINTH,
-                                 MMI_PMULTW, MMI_PDIVW, MMI_PCPYLD,
-                                 MMI_PMADDH, MMI_PHMADH, MMI_PAND,
-                                 MMI_PXOR, MMI_PMSUBH, MMI_PHMSBH,
-                                 MMI_PEXEH, MMI_PREVH, MMI_PMULTH,
-                                 MMI_PDIVBW, MMI_PEXEW, MMI_PROT3W,
-                                 MMI_PMADDUW, MMI_PSRAVW, MMI_PMTHI,
-                                 MMI_PMTLO, MMI_PINTEH, MMI_PMULTUW,
-                                 MMI_PDIVUW, MMI_PCPYUD, MMI_POR,
-                                 MMI_PNOR, MMI_PEXCH, MMI_PCPYH,
-                                 MMI_PEXCW, MMI_PMFHL_LW, MMI_PMFHL_UW,
-                                 MMI_PMFHL_SLW, MMI_PMFHL_LH, MMI_PMFHL_SH,
-                                 MMI_PMTHL_LW, MMI_PSLLH, MMI_PSRLH,
-                                 MMI_PSRAH, MMI_PSLLW, MMI_PSRLW, MMI_PSRAW)>;
+def : InstRW<[GenericWriteMul], (instregex "^EE_(MULT|MADD)U?1?$")>;
+def : InstRW<[GenericWriteMul], (instregex "^EE_(MULT|MADD)U?A_PSEUDO$")>;
+def : InstRW<[GenericWriteMul, GenericWriteMul],
+             (instregex "^EE_(MULT|MADD)U?_PSEUDO$")>;
+def : InstRW<[GenericWriteDIV], (instrs EE_SDIV1)>;
+def : InstRW<[GenericWriteDIVU], (instrs EE_UDIV1)>;
+def : InstRW<[GenericWriteMove], (instregex "^EE_(MT|MF)(LO|HI)1$")>;
+def : InstRW<[GenericWriteALU], (instregex "^MMI_.*$")>;
+def : InstRW<[GenericWriteFPUS], (instregex "^EE_.*S(_PSEUDO)?$")>;
 
 // MIPS DSP ASE, HasDSP
 // ====================
