@@ -241,6 +241,11 @@ LiveVariables::FindLastPartialDef(Register Reg,
     if (MO.getReg() == 0)
       continue;
     Register DefReg = MO.getReg();
+    
+    // Skip any non physical registers, as they are obviously not a subregister.
+    if (!MCRegister::isPhysicalRegister(DefReg))
+      continue;
+
     if (TRI->isSubRegister(Reg, DefReg)) {
       for (MCPhysReg SubReg : TRI->subregs_inclusive(DefReg))
         PartDefRegs.insert(SubReg);
