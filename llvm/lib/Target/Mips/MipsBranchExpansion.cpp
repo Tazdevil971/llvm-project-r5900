@@ -830,7 +830,7 @@ bool MipsBranchExpansion::handleSlot(Pred Predicate, Safe SafeInSlot) {
 bool MipsBranchExpansion::handleMFLO() {
   // mips1-4 require a minimum of 2 instructions between a mflo/mfhi
   // and the next mul/div instruction.
-  if (STI->hasMips32() || STI->hasMips5())
+  if (STI->hasMips32() || STI->hasMips5() || STI->isR5900())
     return false;
 
   return handleMFLOSlot(
@@ -854,7 +854,7 @@ bool MipsBranchExpansion::handleForbiddenSlot() {
 
 bool MipsBranchExpansion::handleFPUDelaySlot() {
   // FPU delay slots are only defined for MIPS3 and below.
-  if (STI->hasMips32() || STI->hasMips4())
+  if (STI->hasMips32() || STI->hasMips4() || STI->isR5900())
     return false;
 
   return handleSlot([this](auto &I) -> bool { return TII->HasFPUDelaySlot(I); },
