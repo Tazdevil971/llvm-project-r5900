@@ -37,6 +37,7 @@ private:
   SDValue tryPerformMADDChainCombine(SDNode *N, DAGCombinerInfo &DCI) const;
   SDValue tryPerformMADDSChainCombine(SDNode *N, DAGCombinerInfo &DCI) const;
   SDValue tryPerformRSQRTCombine(SDNode *N, DAGCombinerInfo &DCI) const;
+  SDValue tryPerformSTORECombine(SDNode *N, DAGCombinerInfo &DCI) const;
 };
 
 } // namespace llvm

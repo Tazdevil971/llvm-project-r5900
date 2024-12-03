@@ -10,6 +10,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+def SDT_MipsEeLq : SDTypeProfile<1, 1, [SDTCisVT<0, i128>, SDTCisVT<1, iPTR>]>;
+def SDT_MipsEeSq : SDTypeProfile<0, 2, [SDTCisVT<0, i128>, SDTCisVT<1, iPTR>]>;
+
 def SDT_MipsEeMult  : SDTypeProfile<2, 2, [SDTCisVT<0, i32>, SDTCisVT<1, untyped>,
                                            SDTCisSameAs<0, 2>, SDTCisSameAs<0, 3>]>;
 def SDT_MipsEeMulta : SDTypeProfile<1, 2, [SDTCisVT<0, untyped>, SDTCisVT<1, i32>, 
@@ -29,6 +32,9 @@ def SDT_MipsEeMAdds  : SDTypeProfile<1, 3, [SDTCisVT<0, f32>, SDTCisSameAs<0, 1>
                                             SDTCisSameAs<0, 2>, SDTCisVT<3, untyped>]>;
 def SDT_MipsEeMAddas : SDTypeProfile<1, 3, [SDTCisVT<0, untyped>, SDTCisVT<1, f32>,
                                             SDTCisSameAs<1, 2>, SDTCisSameAs<0, 3>]>;
+
+def MipsEeLq : SDNode<"MipsISD::EE_LQ", SDT_MipsEeLq, [SDNPHasChain]>;
+def MipsEeSq : SDNode<"MipsISD::EE_SQ", SDT_MipsEeSq, [SDNPHasChain]>;
 
 def MipsEeMult   : SDNode<"MipsISD::EE_MULT", SDT_MipsEeMult>;
 def MipsEeMultu  : SDNode<"MipsISD::EE_MULTU", SDT_MipsEeMult>;
@@ -110,8 +116,8 @@ def : MipsInstAlias<"sync.l", (SYNC 0), 1>, ASE_R5900;
 def : MipsInstAlias<"sync.p", (SYNC 16), 1>, ASE_R5900;
 
 let DecoderNamespace = "EE" in {
-  def EE_LQ : LoadMemory<"lq", GPR128Opnd, mem_simmptr, load>, LW_FM<0x1e>, ASE_R5900;
-  def EE_SQ : StoreMemory<"sq", GPR128Opnd, mem_simmptr, store>, LW_FM<0x1f>, ASE_R5900;
+  def EE_LQ : LoadMemory<"lq", GPR128Opnd, mem_simmptr, MipsEeLq>, LW_FM<0x1e>, ASE_R5900;
+  def EE_SQ : StoreMemory<"sq", GPR128Opnd, mem_simmptr, MipsEeSq>, LW_FM<0x1f>, ASE_R5900;
 }
 
 // These are backported from MIPS IV

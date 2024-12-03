@@ -78,7 +78,8 @@ MipsR5900TargetLowering::MipsR5900TargetLowering(const MipsTargetMachine &TM,
     setOperationAction(ISD::FSQRT, MVT::f32, Legal);
   }
 
-  setTargetDAGCombine({ISD::ADD, ISD::FDIV, ISD::FADD, ISD::FSUB});
+  setTargetDAGCombine({ISD::STORE, ISD::ATOMIC_STORE, ISD::ADD, ISD::FDIV,
+                       ISD::FADD, ISD::FSUB});
 }
 
 SDValue MipsR5900TargetLowering::LowerOperation(SDValue Op,
@@ -113,6 +114,10 @@ SDValue MipsR5900TargetLowering::PerformDAGCombine(SDNode *N,
   case ISD::FSUB:
     // Try performing (fadd/fsub (fmul ...), ...) chain combine
     Val = tryPerformMADDSChainCombine(N, DCI);
+    break;
+  case ISD::STORE:
+  case ISD::ATOMIC_STORE:
+    Val = tryPerformSTORECombine(N, DCI);
     break;
   }
 
@@ -400,4 +405,39 @@ MipsR5900TargetLowering::tryPerformRSQRTCombine(SDNode *N,
 
   return DAG.getNode(MipsISD::EE_RSQRTS, DL, MVT::f32, N->getOperand(0),
                      Sqrt.getOperand(0));
+}
+
+SDValue
+MipsR5900TargetLowering::tryPerformSTORECombine(SDNode *N,
+                                                DAGCombinerInfo &DCI) const {
+  // After legalization i128 load/stores should be gone
+  if (DCI.isBeforeLegalize())
+    continue;
+
+  // This optimization only works on quadwords
+  if (cast<MemSDNode>(N)->getMemoryVT() != MVT::i128)
+    continue;
+
+  SelectionDAG &DAG = DCI.DAG;
+  SDLoc DL(N);
+
+  SDValue Value = N->getOperand(1);
+
+  if (ConstantSDNode::classof(Value) && cast<ConstantSDNode>(Value)->isZero()) {
+    // Case #1: Value is zero
+    return DAG.getNode(MipsISD::EE_SQ, DL, MVT::i128, N->getOperand(0),
+                       DAG.getConstant(0, DL, MVT::i128), N->getOperand(2),
+                       N->getOperand(3));
+  } else if ((Value->getOpcode() == ISD::LOAD ||
+              Value->getOpcode() == ISD::ATOMIC_LOAD) &&
+             cast<MemSDNode>(Value)->getMemoryVT() == MVT::i128 &&
+             Value.hasOneUse()) {
+    // Case #2: Value is a 128 bit load
+    SDValue LQ =
+        DAG.getNode(MipsISD::EE_LQ, DL, MVT::i128, Value->getOperand(0),
+                    Value->getOperand(1), Value->getOperand(2));
+
+    return DAG.getNode(MipsISD::EE_SQ, DL, MVT::i128, N->getOperand(0), LQ,
+                       N->getOperand(2), N->getOperand(3));
+  }
 }

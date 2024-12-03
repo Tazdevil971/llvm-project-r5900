@@ -249,6 +249,9 @@ class TargetRegisterClass;
     // Emotion Engine intrinsics nodes
     EE_RSQRTS,
 
+    EE_LQ,
+    EE_SQ,
+
     EE_ADDAS,
     EE_SUBAS,
     EE_MULAS,
